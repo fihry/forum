@@ -2,11 +2,19 @@ package main
 
 import (
 	forum "forum/src"
+	"log"
 	"net/http"
 )
 
 func main() {
-	Port := ":8080"
+	Port, err := forum.GetPort()
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("Server started at port", Port)
 	forum.InitDB()
-	http.ListenAndServe(Port, nil)
+	err = http.ListenAndServe(Port, nil)
+	if err != nil {
+		panic(err)
+	}
 }
