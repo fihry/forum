@@ -11,10 +11,21 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("Server started at port", Port)
+	// create a new server
+	Mux := http.NewServeMux()
+	server := http.Server{
+		Addr:    "127.0.0.1" + Port,
+		Handler: Mux,
+	}
+
+	log.Println("\033[32mServer running...\033[0m")
+	log.Println("\033[32mThe server has been launched at: " + server.Addr + "/\033[0m")
+	// init database
 	forum.InitDB()
-	err = http.ListenAndServe(Port, nil)
+
+	err = server.ListenAndServe()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 }

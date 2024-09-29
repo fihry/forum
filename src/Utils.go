@@ -11,7 +11,7 @@ func GetPort() (string, error) {
 	Argv := os.Args[1:]
 	DefaultPort := ":8080"
 	if len(Argv) == 0 {
-		return DefaultPort, errors.New("no port provided,forum using default port 8080")
+		return DefaultPort, errors.New("\033[33mno port provided,forum using default port 8080\033[0m")
 	} else if len(Argv) != 1 || !validPort(Argv[0]) {
 		return DefaultPort, errors.New("invalid port :" + Argv[0] + ",forum using default port 8080")
 	}

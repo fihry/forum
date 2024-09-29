@@ -2,7 +2,6 @@ package forum
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -21,7 +20,7 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("\033[32mConnected to database successfully\033[0m")
+	log.Println("\033[32mConnected to database successfully\033[0m")
 
 	// Create tables if not exists
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
