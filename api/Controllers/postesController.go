@@ -5,7 +5,7 @@ import (
 )
 
 func GetPoste(w http.ResponseWriter, r *http.Request) {
-	// code for PosteHandler
+
 }
 func PostPoste(w http.ResponseWriter, r *http.Request) {
 	// code for PosteHandler

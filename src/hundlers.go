@@ -1,13 +1,28 @@
 package forum
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func loginPageHandler(w http.ResponseWriter, r *http.Request) {
-	// code for RoutPageHandler
+func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/login" {
+		http.NotFound(w, r)
+	}
+	RenderTemplate(w, "login", nil)
+
+	
 }
-func registerPageHandler(w http.ResponseWriter, r *http.Request) {
-	// code for RoutPageHandler
+func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/register" {
+		http.NotFound(w, r)
+	} else {
+		RenderTemplate(w, "register", nil)
+	}
 }
-func homePageHandler(w http.ResponseWriter, r *http.Request) {
-	// code for RoutPageHandler
+func HomePageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+	} else {
+		RenderTemplate(w, "Rout", nil)
+	}
 }
