@@ -17,3 +17,7 @@
     - 1 : "create the front-end",
     - 2 : "create the handler",
     - 3 : "gave help in Model ",
+- Gost:
+  - Tasks: 
+    - 1 : "create the middleware",
+    - 2 : help in the handlers,
