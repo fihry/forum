@@ -9,8 +9,6 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	}
 	RenderTemplate(w, "login", nil)
-
-	
 }
 func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/register" {
