@@ -1,6 +1,7 @@
 package main
 
 import (
+	"forum/api/Routes"
 	forum "forum/src"
 	"log"
 	"net/http"
@@ -25,7 +26,7 @@ func main() {
 		log.Println(err)
 	}
 	// create a new database
-	// database = Controllers.Database
+	Routes.Database.DB = db
 	// close the database connection
 	defer db.Close()
 	// handle auth routes

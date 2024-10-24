@@ -10,6 +10,8 @@ import (
 	"net/http"
 )
 
+var Database = Controllers.Database{}
+
 // Users handlers ==================================
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -24,8 +26,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("we get user data", user.Username, user.Password)
-	var db Controllers.Database
-	exists, err := db.CheckUserExist("exampleUser")
+	exists, err := Database.CheckUserExist("exampleUser")
 	if err != nil {
 		log.Fatal(err)
 	}
