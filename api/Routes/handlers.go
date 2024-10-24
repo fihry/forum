@@ -1,26 +1,36 @@
-package routes
+package Routes
 
 import (
 	"encoding/json"
 	"fmt"
+	"forum/api/Controllers"
 	"forum/api/Models"
+	"log"
+
 	"net/http"
 )
 
 // Users handlers ==================================
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	userName := r.FormValue("username")
-	passWord := r.FormValue("password")
-	fmt.Println(userName, passWord)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	var user Models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		fmt.Fprintf(w, "Error: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	}
-	fmt.Println(user)
-	// Authenticate user here
+
+	fmt.Println("we get user data", user.Username, user.Password)
+	var db Controllers.Database
+	exists, err := db.CheckUserExist("exampleUser")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("User exists:", exists)
+
 	w.WriteHeader(http.StatusOK)
 }
 

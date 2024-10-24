@@ -1,7 +1,8 @@
-package controllers
+package Controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/api/Models"
 )
 
@@ -19,6 +20,18 @@ func (db *Database) AddUserIfNotExist(user Models.User) error {
 		return err
 	}
 	return nil
+}
+func (db *Database) CheckUserExist(username string) (bool, error) {
+	if db.DB == nil {
+		return false, fmt.Errorf("database connection is not initialized")
+	}
+
+	var count int
+	err := db.DB.QueryRow("SELECT COUNT(*) FROM Users WHERE username = ?", username).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 
 func (db *Database) GetUser(id int) (Models.User, error) {

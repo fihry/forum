@@ -14,13 +14,20 @@ func main() {
 	// create a new server
 	server := http.Server{
 		Addr:    "127.0.0.1" + Port,
-		Handler: forum.Routes(),
+		Handler: forum.Routs(),
 	}
 	// print the location of the server
 	log.Println("\033[32mServer is running on port " + Port + "...🚀\033[0m")
 	log.Println("\033[32mhttp://localhost" + Port + "\033[0m")
 	// init database
-	forum.InitDB()
+	db, err := forum.InitDB()
+	if err != nil {
+		log.Println(err)
+	}
+	// create a new database
+	// database = Controllers.Database
+	// close the database connection
+	defer db.Close()
 	// handle auth routes
 	err = server.ListenAndServe()
 	if err != nil {

@@ -1,8 +1,9 @@
-package controllers
+package Controllers
 
 import (
 	"forum/api/Models"
 )
+
 
 func (D *Database) GetAllPosts() ([]Models.Poste, error) {
 	rows, err := D.DB.Query("SELECT * FROM posts")
