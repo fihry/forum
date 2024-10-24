@@ -34,7 +34,21 @@ func (db *Database) CheckUserExist(username string) (bool, error) {
 	return count > 0, nil
 }
 
-func (db *Database) GetUser(id int) (Models.User, error) {
+func (db *Database) GetUserByName(username string) (Models.User, error) {
+	user := Models.User{}
+	err := db.DB.QueryRow("SELECT * FROM users WHERE username = ?", username).Scan(
+		&user.ID,
+		&user.Fullname,
+		&user.Username,
+		&user.Password,
+		&user.Email)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (db *Database) GetUserById(id int) (Models.User, error) {
 	user := Models.User{}
 	err := db.DB.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(
 		&user.ID,

@@ -1,4 +1,4 @@
-package forum
+package src
 
 import (
 	"database/sql"
@@ -13,8 +13,6 @@ func InitDB() (*sql.DB, error) {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
-
 	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
@@ -28,6 +26,10 @@ func InitDB() (*sql.DB, error) {
 		log.Fatal(err)
 	}
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, author VARCHAR(20) NOT NULL, category TEXT)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY , key TXET)")
 	if err != nil {
 		log.Fatal(err)
 	}

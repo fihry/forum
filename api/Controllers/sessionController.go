@@ -27,5 +27,5 @@ func (db *Database) GetSession(Key string) (Models.User, error) {
 	if err != nil {
 		return user, err
 	}
-	return db.GetUser(user.ID)
+	return db.GetUserById(user.ID)
 }

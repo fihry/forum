@@ -30,7 +30,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("User exists:", exists)
+	if exists {
+		fmt.Println("User exists")
+	} else {
+		fmt.Println("User does not exist")
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
