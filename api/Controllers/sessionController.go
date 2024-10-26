@@ -8,11 +8,10 @@ import (
 
 func (db *Database) NewSession(user Models.User) (Models.User, error) {
 	UUID, _ := uuid.NewV4()
-	SessionKey := UUID.String()
+	user.SessionKey = UUID.String()
 	_, err := db.DB.Exec("INSERT OR IGNORE INTO session (id, Key) VALUES (?, ?)",
 		user.ID,
-		SessionKey)
-	user.Session = SessionKey
+		user.SessionKey)
 	if err != nil {
 		return user, err
 	}
@@ -23,7 +22,7 @@ func (db *Database) GetSession(Key string) (Models.User, error) {
 	user := Models.User{}
 	err := db.DB.QueryRow("SELECT * FROM session WHERE key = ?", Key).Scan(
 		&user.ID,
-		&user.Session)
+		&user.SessionKey)
 	if err != nil {
 		return user, err
 	}

@@ -21,15 +21,15 @@ func InitDB() (*sql.DB, error) {
 	log.Println("\033[32mConnected to database successfully\033[0m")
 
 	// Create tables if not exists
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT , username VARCHAR(20) UNIQUE  NOT NULL, password TEXT NOT NULL)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(20) UNIQUE NOT NULL, password TEXT NOT NULL, email TEXT NOT NULL, fullname TEXT NOT NULL)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, author VARCHAR(20) NOT NULL, category TEXT)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, author VARCHAR(20) NOT NULL, category TEXT)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY , key TXET)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY, key TEXT)")
 	if err != nil {
 		log.Fatal(err)
 	}
