@@ -21,7 +21,7 @@ func InitDB() (*sql.DB, error) {
 	log.Println("\033[32mConnected to database successfully\033[0m")
 
 	// Create tables if not exists
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(20) UNIQUE NOT NULL, password TEXT NOT NULL, email TEXT NOT NULL, fullname TEXT NOT NULL)")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(20) UNIQUE NOT NULL, password TEXT NOT NULL, email TEXT NOT NULL)")
 	if err != nil {
 		log.Fatal(err)
 	}

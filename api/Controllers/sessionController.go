@@ -28,3 +28,11 @@ func (db *Database) GetSession(Key string) (Models.User, error) {
 	}
 	return db.GetUserById(user.ID)
 }
+
+func (db *Database) DeleteSession(Key string) error {
+	_, err := db.DB.Exec("DELETE FROM session WHERE key = ?", Key)
+	if err != nil {
+		return err
+	}
+	return nil
+}

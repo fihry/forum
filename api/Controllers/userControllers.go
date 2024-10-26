@@ -10,17 +10,6 @@ type Database struct {
 	DB *sql.DB
 }
 
-func (db *Database) AddUserIfNotExist(user Models.User) error {
-	_, err := db.DB.Exec("INSERT OR IGNORE INTO users (fullname, username, password, email) VALUES (?, ?, ?, ?)",
-		user.Fullname,
-		user.Username,
-		user.Password,
-		user.Email)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 func (db *Database) CheckUserExist(username string) (bool, error) {
 	if db.DB == nil {
 		return false, fmt.Errorf("database connection is not initialized")
@@ -38,7 +27,6 @@ func (db *Database) GetUserByName(username string) (Models.User, error) {
 	user := Models.User{}
 	err := db.DB.QueryRow("SELECT * FROM users WHERE username = ?", username).Scan(
 		&user.ID,
-		&user.Fullname,
 		&user.Username,
 		&user.Password,
 		&user.Email)
@@ -52,7 +40,6 @@ func (db *Database) GetUserById(id int) (Models.User, error) {
 	user := Models.User{}
 	err := db.DB.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(
 		&user.ID,
-		&user.Fullname,
 		&user.Username,
 		&user.Password,
 		&user.Email)
@@ -63,8 +50,7 @@ func (db *Database) GetUserById(id int) (Models.User, error) {
 }
 
 func (db *Database) CreateUser(user Models.User) error {
-	_, err := db.DB.Exec("INSERT INTO users (fullname, username, password, email) VALUES (?, ?, ?, ?)",
-		user.Fullname,
+	_, err := db.DB.Exec("INSERT INTO users (username, password, email) VALUES ( ?, ?, ?)",
 		user.Username,
 		user.Password,
 		user.Email)
@@ -75,8 +61,7 @@ func (db *Database) CreateUser(user Models.User) error {
 }
 
 func (db *Database) UpdateUser(user Models.User) error {
-	_, err := db.DB.Exec("UPDATE users SET fullname = ?, username = ?, password = ?, email = ? WHERE id = ?",
-		user.Fullname,
+	_, err := db.DB.Exec("UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?",
 		user.Username,
 		user.Password,
 		user.Email,

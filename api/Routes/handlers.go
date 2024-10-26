@@ -7,7 +7,6 @@ import (
 	"forum/api/Models"
 	"log"
 	"net/http"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,6 +23,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// parse query parameters to user struct
 	user.Username = r.FormValue("username")
 	user.Password = r.FormValue("password")
+	// Validate user data
+	ok, err := CheckDataForLogin(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
 	// Check if user exists
 	exists, err := Database.CheckUserExist(user.Username)
 	if err != nil {
@@ -37,16 +46,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Get user from database
 	storedUser, err := Database.GetUserByName(user.Username)
 	if err != nil {
-		fmt.Println("her")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(storedUser)
 
 	// Compare the provided password with the stored hashed password
-	if !comparePasswords(storedUser.Password, user.Password) {
-		fmt.Println("DATA FROM DB", storedUser.Password) // NOTE: This is the hashed password from the database
-		fmt.Println("DATA FROM USER", user.Password)     // NOTE: This is the plain password from the user
+	if !ComparePasswords(storedUser.Password, user.Password) {
 		http.Error(w, "Invalid password", http.StatusUnauthorized)
 		return
 	}
@@ -64,19 +69,66 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // comparePasswords compares a hashed password  with a plain password
-func comparePasswords(hashedPassword, plainPassword string) bool {
+func ComparePasswords(hashedPassword, plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
 	return err == nil
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var user Models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		return
+	}
+	user.Username = r.FormValue("username")
+	user.Password = r.FormValue("password")
+	user.Email = r.FormValue("email")
+
+	// Check if user already exists
+	exist, err := Database.CheckUserExist(user.Username)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if exist {
+		http.Error(w, "User already exists", http.StatusConflict)
+		return
+	}
+
+	// Validate user data
+	ok, err := CheckDataForRegister(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Create new user here
+	if !ok {
+		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
+
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	user.Password = string(hashedPassword)
+
+	// Create new user
+	err = Database.CreateUser(user)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Set session cookie
+	user, err = Database.NewSession(user)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{Name: "session", Value: user.SessionKey, HttpOnly: true})
 	w.WriteHeader(http.StatusCreated)
 }
 
