@@ -16,36 +16,48 @@ func (db *Database) CheckUserExist(username string) (bool, error) {
 	}
 
 	var count int
-	err := db.DB.QueryRow("SELECT COUNT(*) FROM Users WHERE username = ?", username).Scan(&count)
+	stmt, err := db.DB.Prepare("SELECT COUNT(*) FROM users WHERE username = ?")
 	if err != nil {
 		return false, err
 	}
-	return count > 0, nil
+	defer stmt.Close()
+	err = stmt.QueryRow(username).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	if count == 0 {
+		return false, nil
+	}
+	return true, nil
 }
 
 func (db *Database) GetUserByName(username string) (Models.User, error) {
 	user := Models.User{}
-	err := db.DB.QueryRow("SELECT * FROM users WHERE username = ?", username).Scan(
+	stmt, err := db.DB.Prepare("SELECT * FROM users WHERE username = ?")
+	if err != nil {
+		return user, err
+	}
+	defer stmt.Close()
+	stmt.QueryRow(username).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Password,
 		&user.Email)
-	if err != nil {
-		return user, err
-	}
 	return user, nil
 }
 
 func (db *Database) GetUserById(id int) (Models.User, error) {
 	user := Models.User{}
-	err := db.DB.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(
+	stmt, err := db.DB.Prepare("SELECT * FROM users WHERE id = ?")
+	if err != nil {
+		return user, err
+	}
+	defer stmt.Close()
+	stmt.QueryRow(id).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Password,
 		&user.Email)
-	if err != nil {
-		return user, err
-	}
 	return user, nil
 }
 

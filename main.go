@@ -29,7 +29,6 @@ func main() {
 	Routes.Database.DB = db
 	// close the database connection
 	defer db.Close()
-
 	// start the server
 	err = server.ListenAndServe()
 	if err != nil {

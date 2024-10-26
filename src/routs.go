@@ -16,6 +16,5 @@ func Routs() http.Handler {
 	mux.HandleFunc("/login", LoginPageHandler)
 	mux.HandleFunc("/register", RegisterPageHandler)
 	mux.HandleFunc("/", HomePageHandler)
-
 	return mux
 }

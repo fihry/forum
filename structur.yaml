@@ -8,16 +8,18 @@
   - Tasks: 
     - 1 : "Create the Routes",
     - 2 : "create the Model",
-- Ossama:
+    - 3 : "gave help in Controllers",
+- Oussama:
   - Tasks: 
     - 1 : "create the api auth",
     - 2 : "gave help in routes",
+    - 3 : "create the middlewares",
 - Brahim:
   - Tasks: 
     - 1 : "create the front-end",
     - 2 : "create the handler",
     - 3 : "gave help in Model ",
-- Gost:
+- Yassine:
   - Tasks: 
-    - 1 : "create the middleware",
+    - 1 : "create the Dockerfile",
     - 2 : help in the handlers,

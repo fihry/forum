@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"forum/api/Controllers"
 	"forum/api/Models"
-	"log"
 	"net/http"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,24 +19,26 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var user Models.User
-	r.ParseForm()
-	// parse query parameters to user struct
-	user.Username = r.FormValue("username")
-	user.Password = r.FormValue("password")
-	// Validate user data
-	ok, err := CheckDataForLogin(user)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
 		return
 	}
-	if !ok {
+
+	user.Username = r.FormValue("username")
+	user.Password = r.FormValue("password")
+
+	// Validate user data
+	ok, err := CheckDataForLogin(user)
+	if err != nil || !ok {
 		http.Error(w, "Invalid data", http.StatusBadRequest)
 		return
 	}
+
 	// Check if user exists
 	exists, err := Database.CheckUserExist(user.Username)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
 	if !exists {
 		http.Error(w, "User not found", http.StatusNotFound)
@@ -64,11 +66,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set session cookie
-	http.SetCookie(w, &http.Cookie{Name: "session", Value: session.SessionKey, HttpOnly: true})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    session.SessionKey,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	})
 	w.WriteHeader(http.StatusOK)
 }
 
-// comparePasswords compares a hashed password  with a plain password
+// ComparePasswords compares a hashed password with a plain password
 func ComparePasswords(hashedPassword, plainPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
 	return err == nil
@@ -125,10 +132,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Set session cookie
 	user, err = Database.NewSession(user)
 	if err != nil {
+		fmt.Println("Error creating session")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	http.SetCookie(w, &http.Cookie{Name: "session", Value: user.SessionKey, HttpOnly: true})
+	http.SetCookie(w, &http.Cookie{
+		Name: "session",
+		Value: user.SessionKey,
+		HttpOnly: true,
+	})
 	w.WriteHeader(http.StatusCreated)
 }
 

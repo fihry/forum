@@ -6,7 +6,12 @@ import (
 
 
 func (D *Database) GetAllPosts() ([]Models.Poste, error) {
-	rows, err := D.DB.Query("SELECT * FROM posts")
+	stmt, err := D.DB.Prepare("SELECT * FROM posts")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +35,12 @@ func (D *Database) GetAllPosts() ([]Models.Poste, error) {
 
 func (D *Database) GetPoste(P Models.Poste) (Models.Poste, error) {
 	poste := Models.Poste{}
-	err := D.DB.QueryRow("SELECT * FROM posts WHERE id = ?", P.ID).Scan(
+	stmt, err := D.DB.Prepare("SELECT * FROM posts WHERE id = ?")
+	if err != nil {
+		return poste, err
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(P.ID).Scan(
 		&poste.ID,
 		&poste.Title,
 		&poste.Content,
@@ -43,8 +53,12 @@ func (D *Database) GetPoste(P Models.Poste) (Models.Poste, error) {
 }
 
 func (D *Database) PostPoste(P Models.Poste) (int64, error) {
-	result, err := D.DB.Exec("INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)",
-		P.Title, P.Content, P.Author, P.Category)
+	stmt, err := D.DB.Prepare("INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(P.Title, P.Content, P.Author, P.Category)
 	if err != nil {
 		return 0, err
 	}
@@ -56,8 +70,12 @@ func (D *Database) PostPoste(P Models.Poste) (int64, error) {
 }
 
 func (D *Database) UpdatePoste(P Models.Poste) (int64, error) {
-	result, err := D.DB.Exec("UPDATE posts SET title = ?, content = ?, author = ?, category = ? WHERE id = ?",
-		P.Title, P.Content, P.Author, P.Category, P.ID)
+	stmt, err := D.DB.Prepare("UPDATE posts SET title = ?, content = ?, author = ?, category = ? WHERE id = ?")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(P.Title, P.Content, P.Author, P.Category, P.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -69,7 +87,12 @@ func (D *Database) UpdatePoste(P Models.Poste) (int64, error) {
 }
 
 func (D *Database) DeletePoste(P Models.Poste) (int64, error) {
-	result, err := D.DB.Exec("DELETE FROM posts WHERE id = ?", P.ID)
+	stmt, err := D.DB.Prepare("DELETE FROM posts WHERE id = ?")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(P.ID)
 	if err != nil {
 		return 0, err
 	}
