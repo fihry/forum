@@ -72,6 +72,21 @@ func (db *Database) CreateUser(user Models.User) error {
 	return nil
 }
 
+func (db *Database) GetUserBySession(session string) (Models.User, error) {
+	user := Models.User{}
+	stmt, err := db.DB.Prepare("SELECT * FROM users WHERE session = ?")
+	if err != nil {
+		return user, err
+	}
+	defer stmt.Close()
+	stmt.QueryRow(session).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Password,
+		&user.Email)
+	return user, nil
+}
+
 func (db *Database) UpdateUser(user Models.User) error {
 	_, err := db.DB.Exec("UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?",
 		user.Username,

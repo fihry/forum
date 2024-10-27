@@ -2,7 +2,6 @@ package Routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"forum/api/Controllers"
 	"forum/api/Models"
 	"net/http"
@@ -132,7 +131,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Set session cookie
 	user, err = Database.NewSession(user)
 	if err != nil {
-		fmt.Println("Error creating session")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -146,17 +144,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 // those functions are not required for the task
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("id")
-	fmt.Println(id)
+	// id := r.FormValue("id")
+	// fmt.Println(id)
 	// Update user here
+	w.Write([]byte("this api end point is not implemented yet"))
 	w.WriteHeader(http.StatusOK)
 }
 
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	id := r.FormValue("id")
-	fmt.Println(id)
+	// r.ParseForm()
+	// id := r.FormValue("id")
+	// fmt.Println(id)
 	// Delete user here
+	w.Write([]byte("this api end point is not implemented yet"))
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -164,7 +164,15 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func PostsHandler(w http.ResponseWriter, r *http.Request) {
 	// Get posts here
-	posts := []Models.Poste{}
+	var posts = []Models.Poste{}
+	//get all posts from the database
+	posts, err := Database.GetAllPosts()
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(posts)
 }
 
@@ -175,23 +183,54 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Create new post here
+	// Check if user is authenticated
+	session, err := r.Cookie("session")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	user, err := Database.GetUserBySession(session.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	post.Author = user.Username
+	// Validate post data
+	ok, err := CheckDataForPost(post)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
+	// Create new post here and return the created post
+	id, err := Database.CreatePoste(post)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	post.ID = int(id)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(post)
 	w.WriteHeader(http.StatusCreated)
 }
 
 // those functions are not required for the task
 func UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	id := r.FormValue("id")
-	fmt.Println(id)
+	// r.ParseForm()
+	// id := r.FormValue("id")
+	// fmt.Println(id)
 	// Update post here
+	w.Write([]byte("this api end point is not implemented yet"))
 	w.WriteHeader(http.StatusOK)
 }
 
 func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	id := r.FormValue("id")
-	fmt.Println(id)
-	// Delete post here
+	// r.ParseForm()
+	// id := r.FormValue("id")
+	// fmt.Println(id)
+	w.Write([]byte("this api end point is not implemented yet"))
 	w.WriteHeader(http.StatusNoContent)
 }

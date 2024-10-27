@@ -70,3 +70,13 @@ func CheckDataForLogin(userData Models.User) (bool, error) {
 	}
 	return true, nil
 }
+
+func CheckDataForPost(postData Models.Poste) (bool, error) {
+	if postData.Title == "" {
+		return false, errors.New("title is required")
+	}
+	if postData.Content == "" {
+		return false, errors.New("content is required")
+	}
+	return true, nil
+}
