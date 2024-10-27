@@ -137,13 +137,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name: "session",
-		Value: user.SessionKey,
+		Name:     "session",
+		Value:    user.SessionKey,
 		HttpOnly: true,
 	})
 	w.WriteHeader(http.StatusCreated)
 }
 
+// those functions are not required for the task
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	fmt.Println(id)
@@ -178,6 +179,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// those functions are not required for the task
 func UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	id := r.FormValue("id")
