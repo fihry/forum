@@ -14,7 +14,7 @@ func main() {
 	}
 	// create a new server
 	server := http.Server{
-		Addr:    "127.0.0.1" + Port,
+		Addr:    "0.0.0.0" + Port,
 		Handler: src.Routs(),
 	}
 	// print the location of the server

@@ -135,9 +135,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    user.SessionKey,
-		HttpOnly: true,
+		Name:  "session",
+		Value: user.SessionKey,
 	})
 	w.WriteHeader(http.StatusCreated)
 }
