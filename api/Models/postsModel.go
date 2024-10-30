@@ -14,6 +14,7 @@ type Poste struct {
 	Author   string    `json:"author"`
 	Category string    `json:"category"`
 	Comment  []Comment `json:"comment"`
+	Reaction string	`json:"reaction"`
 }
 
 

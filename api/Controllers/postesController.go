@@ -236,3 +236,17 @@ func (D *Database) DislikePost(P Models.Poste) (int64, error) {
 	}
 	return rows, nil
 }
+
+func (D *Database) GetLIkesAndDislike(P Models.Poste) (int, int, error) {
+	stmt, err := D.DB.Prepare("SELECT likes, dislikes FROM posts WHERE id = ?")
+	if err != nil {
+		return 0, 0, err
+	}
+	defer stmt.Close()
+	var likes, dislikes int
+	err = stmt.QueryRow(P.ID).Scan(&likes, &dislikes)
+	if err != nil {
+		return 0, 0, err
+	}
+	return likes, dislikes, nil
+}

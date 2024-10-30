@@ -5,15 +5,7 @@ RUN apk add --no-cache bash sqlite sqlite-dev gcc musl-dev
 
 WORKDIR /app
 # Copy the rest of the application code
-COPY . /app
-
-# Copy go.mod and go.sum before running go mod tidy
-RUN rm go.sum
-
-# Install dependencies
-RUN go get github.com/gofrs/uuid@v4.4.0+incompatible
-RUN go get github.com/mattn/go-sqlite3@v1.14.23
-RUN go get golang.org/x/crypto
+COPY . .
 
 EXPOSE 5000
 

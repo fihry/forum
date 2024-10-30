@@ -62,10 +62,11 @@ func (db *Database) GetUserById(id int) (Models.User, error) {
 }
 
 func (db *Database) CreateUser(user Models.User) error {
-	_, err := db.DB.Exec("INSERT INTO users (username, password, email) VALUES ( ?, ?, ?)",
+	_, err := db.DB.Exec("INSERT INTO users (username, password, email, session) VALUES ( ?, ?, ?, ?)",
 		user.Username,
 		user.Password,
-		user.Email)
+		user.Email,
+		user.SessionKey)
 	if err != nil {
 		return err
 	}

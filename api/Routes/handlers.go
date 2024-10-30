@@ -2,6 +2,7 @@ package Routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"forum/api/Controllers"
 	"forum/api/Models"
 	"net/http"
@@ -91,17 +92,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = r.FormValue("password")
 	user.Email = r.FormValue("email")
 
-	// Check if user already exists
-	exist, err := Database.CheckUserExist(user.Username)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-	if exist {
-		http.Error(w, "User already exists", http.StatusConflict)
-		return
-	}
-
 	// Validate user data
 	ok, err := CheckDataForRegister(user)
 	if err != nil {
@@ -110,6 +100,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if !ok {
 		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
+
+	// Check if user already exists
+	exist, err := Database.CheckUserExist(user.Username)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if exist {
+		http.Error(w, "User already exists", http.StatusConflict)
 		return
 	}
 
@@ -124,6 +125,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Create new user
 	err = Database.CreateUser(user)
 	if err != nil {
+		fmt.Println("Error creating user", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -142,22 +144,22 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // those functions are not required for the task
-func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	// id := r.FormValue("id")
-	// fmt.Println(id)
-	// Update user here
-	w.Write([]byte("this api end point is not implemented yet"))
-	w.WriteHeader(http.StatusOK)
-}
+// func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+// 	// id := r.FormValue("id")
+// 	// fmt.Println(id)
+// 	// Update user here
+// 	w.Write([]byte("this api end point is not implemented yet"))
+// 	w.WriteHeader(http.StatusOK)
+// }
 
-func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	// r.ParseForm()
-	// id := r.FormValue("id")
-	// fmt.Println(id)
-	// Delete user here
-	w.Write([]byte("this api end point is not implemented yet"))
-	w.WriteHeader(http.StatusNoContent)
-}
+// func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+// 	// r.ParseForm()
+// 	// id := r.FormValue("id")
+// 	// fmt.Println(id)
+// 	// Delete user here
+// 	w.Write([]byte("this api end point is not implemented yet"))
+// 	w.WriteHeader(http.StatusNoContent)
+// }
 
 //  Posts handlers ==================================
 
@@ -217,19 +219,70 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // those functions are not required for the task
-func UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
-	// r.ParseForm()
-	// id := r.FormValue("id")
-	// fmt.Println(id)
-	// Update post here
-	w.Write([]byte("this api end point is not implemented yet"))
-	w.WriteHeader(http.StatusOK)
-}
+// func UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
+// 	// r.ParseForm()
+// 	// id := r.FormValue("id")
+// 	// fmt.Println(id)
+// 	// Update post here
+// 	w.Write([]byte("this api end point is not implemented yet"))
+// 	w.WriteHeader(http.StatusOK)
+// }
 
-func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
-	// r.ParseForm()
-	// id := r.FormValue("id")
-	// fmt.Println(id)
-	w.Write([]byte("this api end point is not implemented yet"))
-	w.WriteHeader(http.StatusNoContent)
+// func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
+// 	// r.ParseForm()
+// 	// id := r.FormValue("id")
+// 	// fmt.Println(id)
+// 	w.Write([]byte("this api end point is not implemented yet"))
+// 	w.WriteHeader(http.StatusNoContent)
+// }
+
+// Reaction handlers ==================================
+func PostReactionHandler(w http.ResponseWriter, r *http.Request) {
+	var post Models.Poste
+	err := json.NewDecoder(r.Body).Decode(&post)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Check if user is authenticated
+	session, err := r.Cookie("session")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	user, err := Database.GetUserBySession(session.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	post.Author = user.Username
+	// Validate post data
+	ok, err := CheckDataForPost(post)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
+	// check type of reaction
+	if post.Reaction == "like" {
+		// like the post
+		_, err = Database.LikePost(post)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	}
+	if post.Reaction == "dislike" {
+		// dislike the post
+		_, err = Database.DislikePost(post)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	}
+	w.WriteHeader(http.StatusOK)
+
 }
