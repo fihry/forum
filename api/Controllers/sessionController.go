@@ -23,7 +23,6 @@ func (db *Database) NewSession(user Models.User) (Models.User, error) {
 
 	_, err = stmt.Exec(user.SessionKey)
 	if err != nil {
-		fmt.Println(err)
 		return user, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	log.Println("New session created", user.SessionKey)

@@ -121,6 +121,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
+	// Set session cookie
 
 	// Create new user
 	err = Database.CreateUser(user)
@@ -130,15 +131,16 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set session cookie
-	user, err = Database.NewSession(user)
+	// Create session
+	sessionUser, err := Database.NewSession(user)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:  "session",
-		Value: user.SessionKey,
+		Value: sessionUser.SessionKey,
 	})
 	w.WriteHeader(http.StatusCreated)
 }
@@ -268,6 +270,9 @@ func PostReactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// check type of reaction
 	if post.Reaction == "like" {
+		//check if already liked : remove like
+		//if not liked :
+		//check if already disliked : remove dislike
 		// like the post
 		_, err = Database.LikePost(post)
 		if err != nil {
@@ -276,6 +281,9 @@ func PostReactionHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if post.Reaction == "dislike" {
+		//check if already disliked : remove dislike
+		//if not disliked :
+		//check if already liked : remove like
 		// dislike the post
 		_, err = Database.DislikePost(post)
 		if err != nil {

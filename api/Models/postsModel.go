@@ -5,6 +5,8 @@ type Comment struct {
 	Content string `json:"content"`
 	Author  string `json:"author"`
 	PosteID int    `json:"poste_id"`
+	Likes   int    `json:"likes"`
+	Dislikes int    `json:"dislikes"`
 }
 
 type Poste struct {

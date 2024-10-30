@@ -220,8 +220,44 @@ func (D *Database) LikePost(P Models.Poste) (int64, error) {
 	return rows, nil
 }
 
+// remove like from the post
+func (d *Database) RemoveLike(P Models.Poste) (int64, error) {
+	stmt, err := d.DB.Prepare("UPDATE posts SET likes = likes - 1 WHERE id = ?")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(P.ID)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
 func (D *Database) DislikePost(P Models.Poste) (int64, error) {
 	stmt, err := D.DB.Prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(P.ID)
+	if err != nil {
+		return 0, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rows, nil
+}
+
+// remove dislike from the post
+func (d *Database) RemoveDislike(P Models.Poste) (int64, error) {
+	stmt, err := d.DB.Prepare("UPDATE posts SET dislikes = dislikes - 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
