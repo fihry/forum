@@ -16,7 +16,7 @@ func NewSession(user models.User) (models.User, error) {
 	}
 	user.SessionKey = UUID.String()
 
-	stmt, err := Database.DB.Prepare("INSERT OR IGNORE INTO users (session) VALUES (?)")
+	stmt, err := Database.Prepare("INSERT OR IGNORE INTO users (session) VALUES (?)")
 	if err != nil {
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -33,7 +33,7 @@ func NewSession(user models.User) (models.User, error) {
 func GetSession(Key string) (models.User, error) {
 	user := models.User{}
 
-	stmt, err := Database.DB.Prepare("SELECT * FROM users WHERE session = ?")
+	stmt, err := Database.Prepare("SELECT * FROM users WHERE session = ?")
 	if err != nil {
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -47,7 +47,7 @@ func GetSession(Key string) (models.User, error) {
 }
 
 func DeleteSession(Key string) error {
-	stmt, err := Database.DB.Prepare("DELETE FROM users WHERE session = ?")
+	stmt, err := Database.Prepare("DELETE FROM users WHERE session = ?")
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
 	}

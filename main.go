@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// defer close the database connection
-	defer controllers.Database.DB.Close()
+	defer controllers.Database.Close()
 
 	// start the server
 	err = server.ListenAndServe()

@@ -5,7 +5,7 @@ import (
 )
 
 func GetAllPosts() ([]models.Poste, error) {
-	stmt, err := Database.DB.Prepare("SELECT * FROM posts")
+	stmt, err := Database.Prepare("SELECT * FROM posts")
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func GetAllPosts() ([]models.Poste, error) {
 
 func GetPoste(P models.Poste) (models.Poste, error) {
 	poste := models.Poste{}
-	stmt, err := Database.DB.Prepare("SELECT * FROM posts WHERE id = ?")
+	stmt, err := Database.Prepare("SELECT * FROM posts WHERE id = ?")
 	if err != nil {
 		return poste, err
 	}
@@ -52,7 +52,7 @@ func GetPoste(P models.Poste) (models.Poste, error) {
 }
 
 func CreatePoste(P models.Poste) (int64, error) {
-	stmt, err := Database.DB.Prepare("INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)")
+	stmt, err := Database.Prepare("INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return 0, err
 	}
@@ -69,7 +69,7 @@ func CreatePoste(P models.Poste) (int64, error) {
 }
 
 // func UpdatePoste(P models.Poste) (int64, error) {
-// 	stmt, err := Database.DB.Prepare("UPDATE posts SET title = ?, content = ?, author = ?, category = ? WHERE id = ?")
+// 	stmt, err := Database.Prepare("UPDATE posts SET title = ?, content = ?, author = ?, category = ? WHERE id = ?")
 // 	if err != nil {
 // 		return 0, err
 // 	}
@@ -86,7 +86,7 @@ func CreatePoste(P models.Poste) (int64, error) {
 // }
 
 // func DeletePoste(P models.Poste) (int64, error) {
-// 	stmt, err := Database.DB.Prepare("DELETE FROM posts WHERE id = ?")
+// 	stmt, err := Database.Prepare("DELETE FROM posts WHERE id = ?")
 // 	if err != nil {
 // 		return 0, err
 // 	}
@@ -103,7 +103,7 @@ func CreatePoste(P models.Poste) (int64, error) {
 // }
 
 func GetPostsByCategory(category string) ([]models.Poste, error) {
-	stmt, err := Database.DB.Prepare("SELECT * FROM posts WHERE category = ?")
+	stmt, err := Database.Prepare("SELECT * FROM posts WHERE category = ?")
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func GetPostsByCategory(category string) ([]models.Poste, error) {
 }
 
 func GetPostsByAuthor(author string) ([]models.Poste, error) {
-	stmt, err := Database.DB.Prepare("SELECT * FROM posts WHERE author = ?")
+	stmt, err := Database.Prepare("SELECT * FROM posts WHERE author = ?")
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func GetPostsByAuthor(author string) ([]models.Poste, error) {
 }
 
 func AddComment(C models.Comment) (int64, error) {
-	stmt, err := Database.DB.Prepare("INSERT INTO comments (content, author, post_id) VALUES (?, ?, ?)")
+	stmt, err := Database.Prepare("INSERT INTO comments (content, author, post_id) VALUES (?, ?, ?)")
 	if err != nil {
 		return 0, err
 	}
@@ -176,7 +176,7 @@ func AddComment(C models.Comment) (int64, error) {
 }
 
 func GetCommentsByPostId(id int) ([]models.Comment, error) {
-	stmt, err := Database.DB.Prepare("SELECT * FROM comments WHERE post_id = ?")
+	stmt, err := Database.Prepare("SELECT * FROM comments WHERE post_id = ?")
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +204,7 @@ func GetCommentsByPostId(id int) ([]models.Comment, error) {
 
 // like and dislike the post
 func LikePost(P models.Poste) (int64, error) {
-	stmt, err := Database.DB.Prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?")
+	stmt, err := Database.Prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
@@ -222,7 +222,7 @@ func LikePost(P models.Poste) (int64, error) {
 
 // remove like from the post
 func RemoveLike(P models.Poste) (int64, error) {
-	stmt, err := Database.DB.Prepare("UPDATE posts SET likes = likes - 1 WHERE id = ?")
+	stmt, err := Database.Prepare("UPDATE posts SET likes = likes - 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
@@ -239,7 +239,7 @@ func RemoveLike(P models.Poste) (int64, error) {
 }
 
 func DislikePost(P models.Poste) (int64, error) {
-	stmt, err := Database.DB.Prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?")
+	stmt, err := Database.Prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
@@ -257,7 +257,7 @@ func DislikePost(P models.Poste) (int64, error) {
 
 // remove dislike from the post
 func RemoveDislike(P models.Poste) (int64, error) {
-	stmt, err := Database.DB.Prepare("UPDATE posts SET dislikes = dislikes - 1 WHERE id = ?")
+	stmt, err := Database.Prepare("UPDATE posts SET dislikes = dislikes - 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
@@ -274,7 +274,7 @@ func RemoveDislike(P models.Poste) (int64, error) {
 }
 
 func GetLIkesAndDislike(P models.Poste) (int, int, error) {
-	stmt, err := Database.DB.Prepare("SELECT likes, dislikes FROM posts WHERE id = ?")
+	stmt, err := Database.Prepare("SELECT likes, dislikes FROM posts WHERE id = ?")
 	if err != nil {
 		return 0, 0, err
 	}

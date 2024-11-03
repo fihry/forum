@@ -7,12 +7,12 @@ import (
 )
 
 func CheckUserExist(username string) (bool, error) {
-	if Database.DB == nil {
+	if Database == nil {
 		return false, fmt.Errorf("database connection is not initialized")
 	}
 
 	var count int
-	stmt, err := Database.DB.Prepare("SELECT COUNT(*) FROM users WHERE username = ?")
+	stmt, err := Database.Prepare("SELECT COUNT(*) FROM users WHERE username = ?")
 	if err != nil {
 		return false, err
 	}
@@ -29,7 +29,7 @@ func CheckUserExist(username string) (bool, error) {
 
 func GetUserByName(username string) (models.User, error) {
 	user := models.User{}
-	stmt, err := Database.DB.Prepare("SELECT * FROM users WHERE username = ?")
+	stmt, err := Database.Prepare("SELECT * FROM users WHERE username = ?")
 	if err != nil {
 		return user, err
 	}
@@ -44,7 +44,7 @@ func GetUserByName(username string) (models.User, error) {
 
 func GetUserById(id int) (models.User, error) {
 	user := models.User{}
-	stmt, err := Database.DB.Prepare("SELECT * FROM users WHERE id = ?")
+	stmt, err := Database.Prepare("SELECT * FROM users WHERE id = ?")
 	if err != nil {
 		return user, err
 	}
@@ -59,7 +59,7 @@ func GetUserById(id int) (models.User, error) {
 
 // use prepare herz
 func CreateUser(user models.User) error {
-	_, err := Database.DB.Exec("INSERT INTO users (username, password, email, session) VALUES ( ?, ?, ?, ?)",
+	_, err := Database.Exec("INSERT INTO users (username, password, email, session) VALUES ( ?, ?, ?, ?)",
 		user.Username,
 		user.Password,
 		user.Email,
@@ -72,7 +72,7 @@ func CreateUser(user models.User) error {
 
 func GetUserBySession(session string) (models.User, error) {
 	user := models.User{}
-	stmt, err := Database.DB.Prepare("SELECT * FROM users WHERE session = ?")
+	stmt, err := Database.Prepare("SELECT * FROM users WHERE session = ?")
 	if err != nil {
 		return user, err
 	}
@@ -86,7 +86,7 @@ func GetUserBySession(session string) (models.User, error) {
 }
 
 func UpdateUser(user models.User) error {
-	_, err := Database.DB.Exec("UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?",
+	_, err := Database.Exec("UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?",
 		user.Username,
 		user.Password,
 		user.Email,

@@ -8,9 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var Database = struct {
-	DB *sql.DB
-}{}
+var Database *sql.DB
 
 func InitDB() error {
 	db, err := sql.Open("sqlite3", "./db/Forum.db")
@@ -86,7 +84,7 @@ func InitDB() error {
 	}
 
 	// set the database to the database object
-	Database.DB = db
+	Database = db
 
 	return nil
 }
