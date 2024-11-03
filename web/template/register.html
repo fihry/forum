@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sing up</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="/static/global.css">
+    <link rel="stylesheet" href="static/css/global.css">
 </head>
 <body>
-    <div class="suwep">
-      <div class="sign-uwep">
-        <h2>Sing-up to <span>Forum</span></h2>
+    <div class="registration">
+      <div class="signup">
+        <h2>become a dragon</h2>
         <form action="/api/register" method="post">
             <label for="userName">User name</label>
             <input type="text" name="username" id="userName" placeholder="User name">
@@ -21,18 +21,12 @@
             <input type="password" name="password" id="password"placeholder="password">
             <label for="confermpassword">Confirm Password</label>
             <input type="password" name="confirmPassword" id="confermpassword"placeholder="confirm password">
-                <span> 
-                    <label for="checkBox"></label>
-                    <input type="checkbox" name="checkBox" id="checkBox">
-                    agree to the Privacy
-                </span>
-            <div class="Privacy-agree">
-                By creating an account, I agree to forum <a href="">Terms of Service</a>,
-                <a href="">Privacy Policy</a> and <a href="">Intellectual Property Rights</a>
-            </div>
             <label for=""></label>
-            <input type="submit" value="submit">
+            <input class="submit" type="submit" value="submit">
         </form>
+        <div
+        >you already a dragon ? <a href="/login">login here</a>
+    </div>
       </div>
     </div>
 </body>
