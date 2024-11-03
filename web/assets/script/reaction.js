@@ -5,12 +5,13 @@ export async function like(post, card, likeButton) {
     post.likes_count += post.liked ? 1 : -1; // Update likes count
 
     const action = post.liked ? 'add' : 'remove';
+    console.log(action, post.id)
     await fetch('/api/posts/like', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({poste_id: post.id, action: action}),})
+        body: JSON.stringify({post_id: post.id, like_action: action}),})
     // Update the icon color
     icon.style.color = post.liked ? 'blue' : 'white';
 
@@ -29,7 +30,7 @@ export async function dislike(post, card, dislikeButton) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ postId: post.id, action: action}),})
+        body: JSON.stringify({ post_id: post.id, dislike_action: action}),})
     post.dislike_count += post.disliked ? 1 : -1; // Update dislikes count
 
     // Update the icon color

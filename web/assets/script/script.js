@@ -1,5 +1,4 @@
 import {like, dislike} from './reaction.js';
-import {model} from './model.js'
 
 async function getAllPosts() {
     const jsonData = await fetch('/api/posts');
@@ -39,10 +38,6 @@ async function loadData(posts) {
         //add event listeners
         const likeButton = card.querySelector('.like')
         const dislikeButton = card.querySelector('.dislike');
-        card.addEventListener('click', () => {
-            console.log('something');
-            loadPost(post);
-        })
 
         likeButton.addEventListener('click', () => {
             if (!post.liked && post.disliked) dislike(post, card, dislikeButton)
@@ -62,7 +57,3 @@ async function main() {
     loadData(posts)
 }
 main()
-
-function loadPost(post) {
-    
-}

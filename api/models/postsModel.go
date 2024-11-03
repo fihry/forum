@@ -18,3 +18,11 @@ type Poste struct {
 	LikesCount   int       `json:"likes_count"`
 	DislikeCount int       `json:"dislike_count"`
 }
+
+type Engagement struct {
+	UserID int `json:"user_id"`
+	PosteID int `json:"post_id"`
+	CommentID int `json:"comment_id"`
+	LikeAction string `json:"like_action"`
+	DislikeAction string `json:"dislike_action"`
+}

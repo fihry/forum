@@ -64,27 +64,41 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-// Reaction handlers ==================================
-func PostReactionHandler(w http.ResponseWriter, r *http.Request) {
-	var post models.Poste
-	err := json.NewDecoder(r.Body).Decode(&post)
+// Reaction handlers =================================
+func LikePostHandler(w http.ResponseWriter, r *http.Request) {
+	// session, err := r.Cookie("session")
+	// if err != nil {
+	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	// 	return
+	// }
+	// user, err := controllers.GetUserBySession(session.Value)
+	// if err != nil {
+	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	// 	return
+	// }
+	engagement := models.Engagement{}
+	err := json.NewDecoder(r.Body).Decode(&engagement)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Check if user is authenticated
-	session, err := r.Cookie("session")
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+
+	// Update post likes and dislikes
+	var n int64
+	if engagement.LikeAction == "add" {
+		n, err = controllers.LikePost(engagement.PosteID)
+		controllers.AddLikeToEngament(engagement.PosteID, 5)
+	} else if engagement.LikeAction == "remove" {
+		n, err = controllers.RemoveLike(engagement.PosteID)
+		controllers.RemLikeFromEngagement(engagement.PosteID, 5)
+	} else {
+		http.Error(w, "Invalid action", http.StatusBadRequest)
 		return
 	}
-	user, err := controllers.GetUserBySession(session.Value)
-	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	if err != nil || n == 0 {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	post.Author = user.Username
-	// Validate post data
 
 	w.WriteHeader(http.StatusOK)
 }

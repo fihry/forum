@@ -17,7 +17,7 @@ func ApiRoutes() http.Handler {
 	// ============== post routes
 	mux.Handle("/api/posts", http.HandlerFunc(handlers.PostsHandler))
 	mux.Handle("/api/createPost", http.HandlerFunc(handlers.CreatePostHandler))
-	mux.Handle("/api/postReaction", http.HandlerFunc(handlers.PostReactionHandler))
+	mux.Handle("/api/posts/like", http.HandlerFunc(handlers.LikePostHandler))
 	return mux
 }
 
@@ -30,7 +30,7 @@ func InitRouter() http.Handler {
 	router.Handle("/api/", ApiRoutes())
 
 	// handle frontend routes
-	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/css"))))
+	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/assets"))))
 	router.HandleFunc("/login", handlers.LoginPageHandler)
 	router.HandleFunc("/register", handlers.RegisterPageHandler)
 	router.HandleFunc("/", handlers.HomePageHandler)

@@ -27,5 +27,5 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	utils.RenderTemplate(w, "Rout", nil)
+	utils.RenderTemplate(w, "index", nil)
 }
