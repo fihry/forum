@@ -7,6 +7,13 @@ import (
 	"forum/api/models"
 )
 
+func CheckAuth(session string) (bool, error) {
+	if session == "" {
+		return false, errors.New("Unauthorized")
+	}
+	return true, nil
+}
+
 func CheckDataForRegister(userData models.User) (bool, error) {
 	if userData.Username == "" {
 		return false, errors.New("username is required")
