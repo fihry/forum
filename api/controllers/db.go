@@ -1,21 +1,26 @@
-package src
+package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func InitDB() (*sql.DB, error) {
+var Database = struct {
+	DB *sql.DB
+}{}
+
+func InitDB() error {
 	db, err := sql.Open("sqlite3", "./db/Forum.db")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("error in  db connection:  \n" + err.Error())
 	}
 
 	log.Println("\033[32mConnected to database successfully\033[0m")
@@ -31,7 +36,7 @@ func InitDB() (*sql.DB, error) {
     )
 `)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("error in  creating table users: \n" + err.Error())
 	}
 
 	_, err = db.Exec(`
@@ -47,7 +52,7 @@ func InitDB() (*sql.DB, error) {
     )
 `)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("error in creating table posts: \n" + err.Error())
 	}
 
 	_, err = db.Exec(`
@@ -61,7 +66,7 @@ func InitDB() (*sql.DB, error) {
     )
 `)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("error in creating table comments:  \n" + err.Error())
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS engagement (
@@ -77,8 +82,11 @@ func InitDB() (*sql.DB, error) {
     )
 `)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("error in creating  table engagement: \n" + err.Error())
 	}
 
-	return db, err
+	// set the database to the database object
+	Database.DB = db
+
+	return nil
 }

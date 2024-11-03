@@ -1,21 +1,22 @@
-package Controllers
+package controllers
 
 import (
 	"fmt"
-	"forum/api/Models"
 	"log"
+
+	"forum/api/models"
 
 	"github.com/gofrs/uuid"
 )
 
-func (db *Database) NewSession(user Models.User) (Models.User, error) {
+func NewSession(user models.User) (models.User, error) {
 	UUID, err := uuid.NewV4()
 	if err != nil {
 		return user, fmt.Errorf("failed to generate UUID: %w", err)
 	}
 	user.SessionKey = UUID.String()
 
-	stmt, err := db.DB.Prepare("INSERT OR IGNORE INTO users (session) VALUES (?)")
+	stmt, err := Database.DB.Prepare("INSERT OR IGNORE INTO users (session) VALUES (?)")
 	if err != nil {
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -29,10 +30,10 @@ func (db *Database) NewSession(user Models.User) (Models.User, error) {
 	return user, nil
 }
 
-func (db *Database) GetSession(Key string) (Models.User, error) {
-	user := Models.User{}
+func GetSession(Key string) (models.User, error) {
+	user := models.User{}
 
-	stmt, err := db.DB.Prepare("SELECT * FROM users WHERE session = ?")
+	stmt, err := Database.DB.Prepare("SELECT * FROM users WHERE session = ?")
 	if err != nil {
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -42,11 +43,11 @@ func (db *Database) GetSession(Key string) (Models.User, error) {
 	if err != nil {
 		return user, fmt.Errorf("failed to query row: %w", err)
 	}
-	return db.GetUserById(user.ID)
+	return GetUserById(user.ID)
 }
 
-func (db *Database) DeleteSession(Key string) error {
-	stmt, err := db.DB.Prepare("DELETE FROM users WHERE session = ?")
+func DeleteSession(Key string) error {
+	stmt, err := Database.DB.Prepare("DELETE FROM users WHERE session = ?")
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
 	}
