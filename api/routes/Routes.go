@@ -7,7 +7,6 @@ import (
 )
 
 // ApiRoutes function returns a http.Handler that handles all the api routes for the application
-
 func ApiRoutes() http.Handler {
 	// create a new ServeMux
 	mux := http.NewServeMux()
@@ -22,6 +21,7 @@ func ApiRoutes() http.Handler {
 	return mux
 }
 
+// InitRouter function returns a http.Handler that handles all the routes for the application
 func InitRouter() http.Handler {
 	// create a new ServeMux
 	router := http.NewServeMux()

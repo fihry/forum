@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-
 	"forum/api/models"
 )
 
@@ -59,11 +58,12 @@ func GetUserById(id int) (models.User, error) {
 
 // use prepare herz
 func CreateUser(user models.User) error {
-	_, err := Database.Exec("INSERT INTO users (username, password, email, session) VALUES ( ?, ?, ?, ?)",
-		user.Username,
-		user.Password,
-		user.Email,
-		user.SessionKey)
+	stmt, err := Database.Prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(user.Username, user.Password, user.Email)
 	if err != nil {
 		return err
 	}

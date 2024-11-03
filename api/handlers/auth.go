@@ -68,6 +68,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "session",
 		Value:    session.SessionKey,
 		HttpOnly: true,
+		Expires:  session.ExpireDate,
 		SameSite: http.SameSiteStrictMode,
 	})
 	w.WriteHeader(http.StatusOK)
@@ -137,8 +138,10 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:  "session",
-		Value: sessionUser.SessionKey,
+		Name:     "session",
+		Value:    sessionUser.SessionKey,
+		Secure:   true,
+		Expires:  sessionUser.ExpireDate,
 	})
 	w.WriteHeader(http.StatusCreated)
 }

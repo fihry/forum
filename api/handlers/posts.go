@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"forum/api/controllers"
@@ -13,6 +14,7 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 	// get all posts from the database
 	posts, err := controllers.GetAllPosts()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -83,37 +85,6 @@ func PostReactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	post.Author = user.Username
 	// Validate post data
-	ok, err := utils.CheckDataForPost(post)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if !ok {
-		http.Error(w, "Invalid data", http.StatusBadRequest)
-		return
-	}
-	// check type of reaction
-	if post.Reaction == "like" {
-		// check if already liked : remove like
-		// if not liked :
-		// check if already disliked : remove dislike
-		// like the post
-		_, err = controllers.LikePost(post)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-	}
-	if post.Reaction == "dislike" {
-		// check if already disliked : remove dislike
-		// if not disliked :
-		// check if already liked : remove like
-		// dislike the post
-		_, err = controllers.DislikePost(post)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-	}
+
 	w.WriteHeader(http.StatusOK)
 }

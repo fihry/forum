@@ -5,18 +5,16 @@ type Comment struct {
 	Content string `json:"content"`
 	Author  string `json:"author"`
 	PosteID int    `json:"poste_id"`
-	Likes   int    `json:"likes"`
-	Dislikes int    `json:"dislikes"`
 }
-
 type Poste struct {
-	ID       int       `json:"id"`
-	Title    string    `json:"title"`
-	Content  string    `json:"content"`
-	Author   string    `json:"author"`
-	Category string    `json:"category"`
-	Comment  []Comment `json:"comment"`
-	Reaction string	`json:"reaction"`
+	ID           int       `json:"id"`
+	Title        string    `json:"title"`
+	Content      string    `json:"content"`
+	Author       string    `json:"author"`
+	Category     string    `json:"category"`
+	Comment      []Comment `json:"comments"`
+	Liked        bool      `json:"liked"`
+	Disliked     bool      `json:"disliked"`
+	LikesCount   int       `json:"likes_count"`
+	DislikeCount int       `json:"dislike_count"`
 }
-
-

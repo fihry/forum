@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"forum/api/models"
+	"log"
 )
 
 func GetAllPosts() ([]models.Poste, error) {
@@ -23,8 +24,13 @@ func GetAllPosts() ([]models.Poste, error) {
 			&poste.Title,
 			&poste.Content,
 			&poste.Author,
-			&poste.Category)
+			&poste.Category,
+			&poste.LikesCount,
+			&poste.DislikeCount,
+			&poste.Disliked,
+			&poste.Liked)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		posts = append(posts, poste)
@@ -44,7 +50,9 @@ func GetPoste(P models.Poste) (models.Poste, error) {
 		&poste.Title,
 		&poste.Content,
 		&poste.Author,
-		&poste.Category)
+		&poste.Category,
+		&poste.LikesCount,
+		&poste.DislikeCount)
 	if err != nil {
 		return poste, err
 	}
@@ -121,7 +129,9 @@ func GetPostsByCategory(category string) ([]models.Poste, error) {
 			&poste.Title,
 			&poste.Content,
 			&poste.Author,
-			&poste.Category)
+			&poste.Category,
+			&poste.LikesCount,
+			&poste.DislikeCount)
 		if err != nil {
 			return nil, err
 		}
@@ -149,7 +159,9 @@ func GetPostsByAuthor(author string) ([]models.Poste, error) {
 			&poste.Title,
 			&poste.Content,
 			&poste.Author,
-			&poste.Category)
+			&poste.Category,
+			&poste.LikesCount,
+			&poste.DislikeCount)
 		if err != nil {
 			return nil, err
 		}
@@ -238,13 +250,13 @@ func RemoveLike(P models.Poste) (int64, error) {
 	return rows, nil
 }
 
-func DislikePost(P models.Poste) (int64, error) {
+func DislikePost(postId int) (int64, error) {
 	stmt, err := Database.Prepare("UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(P.ID)
+	result, err := stmt.Exec(postId)
 	if err != nil {
 		return 0, err
 	}
@@ -256,13 +268,13 @@ func DislikePost(P models.Poste) (int64, error) {
 }
 
 // remove dislike from the post
-func RemoveDislike(P models.Poste) (int64, error) {
+func RemoveDislike(postId int) (int64, error) {
 	stmt, err := Database.Prepare("UPDATE posts SET dislikes = dislikes - 1 WHERE id = ?")
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(P.ID)
+	result, err := stmt.Exec(postId)
 	if err != nil {
 		return 0, err
 	}
@@ -273,14 +285,14 @@ func RemoveDislike(P models.Poste) (int64, error) {
 	return rows, nil
 }
 
-func GetLIkesAndDislike(P models.Poste) (int, int, error) {
+func GetLIkesAndDislike(postId int) (int, int, error) {
 	stmt, err := Database.Prepare("SELECT likes, dislikes FROM posts WHERE id = ?")
 	if err != nil {
 		return 0, 0, err
 	}
 	defer stmt.Close()
 	var likes, dislikes int
-	err = stmt.QueryRow(P.ID).Scan(&likes, &dislikes)
+	err = stmt.QueryRow(postId).Scan(&likes, &dislikes)
 	if err != nil {
 		return 0, 0, err
 	}
