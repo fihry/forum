@@ -2,15 +2,15 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(20) UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    email TEXT NOT NULL
+    email TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY,
-    userId INTEGER NOT NULL,
+    username VARCHAR(20) NOT NULL,
     key TEXT,
     ExpireDate DATETIME,
-    FOREIGN KEY (userId) REFERENCES users(id)
+    FOREIGN KEY (username) REFERENCES users(username)
 
 );   
 

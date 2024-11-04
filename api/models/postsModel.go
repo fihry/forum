@@ -13,8 +13,8 @@ type Poste struct {
 	Author       string    `json:"author"`
 	Category     string    `json:"category"`
 	Comment      []Comment `json:"comments"`
-	Liked        bool      `json:"liked"`
-	Disliked     bool      `json:"disliked"`
+	Liked        *bool     `json:"liked"`
+	Disliked     *bool     `json:"disliked"`
 	LikesCount   int       `json:"likes_count"`
 	DislikeCount int       `json:"dislike_count"`
 }

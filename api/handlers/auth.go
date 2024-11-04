@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"forum/api/controllers"
@@ -57,7 +58,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create session
-	session, err := controllers.NewSession(storedUser)
+	session, err := controllers.UpdateSessionByUser(user)
+	log.Println("Session", session.SessionKey, session.ExpireDate, session.Username)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
@@ -67,8 +69,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    session.SessionKey,
-		HttpOnly: true,
 		Expires:  session.ExpireDate,
+		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 	})
 	w.WriteHeader(http.StatusOK)
@@ -112,6 +114,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User already exists", http.StatusConflict)
 		return
 	}
+	exist, err = controllers.CheckEmailExist(user.Email)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if exist {
+		http.Error(w, "Email already exists", http.StatusConflict)
+		return
+	}
 
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -122,7 +133,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = string(hashedPassword)
 	// Set session cookie
 
-	// Create new user
+	// Create user
 	err = controllers.CreateUser(user)
 	if err != nil {
 		fmt.Println("Error creating user", err)
@@ -130,18 +141,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create session
+	// Create new session
 	sessionUser, err := controllers.NewSession(user)
 	if err != nil {
+		log.Println("Error creating session", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    sessionUser.SessionKey,
-		Secure:   true,
-		Expires:  sessionUser.ExpireDate,
+		Name:    "session",
+		Value:   sessionUser.SessionKey,
+		Expires: sessionUser.ExpireDate,
+		Secure:  true,
 	})
 	w.WriteHeader(http.StatusCreated)
 }
