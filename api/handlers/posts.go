@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -45,7 +46,7 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// User is authenticated; get posts with engagement info
-	posts, err := controllers.GetAllPostsByUser(user)
+	posts, err := controllers.GetAllPostsWithEngagement(user.ID)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -121,11 +122,24 @@ func LikePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Update post likes and dislikes
 	var n int64
 	if engagement.LikeAction == "add" {
-		n, err = controllers.LikePost(engagement.PosteID)
-		controllers.AddLikeToEngament(engagement.PosteID, 5)
+		post := models.Poste{ID: engagement.PosteID}
+		fmt.Println("post id", post.ID)
+		post = controllers.GetPostByEngagement(20, post)
+		if post.Liked == nil {
+			fmt.Println("post liked")
+			n, err = controllers.LikePost(engagement.PosteID, 20)
+			if err := controllers.AddLikeToEngament(engagement.PosteID, 20); err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		} else {
+			fmt.Println("post already liked")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	} else if engagement.LikeAction == "remove" {
 		n, err = controllers.RemoveLike(engagement.PosteID)
-		controllers.RemLikeFromEngagement(engagement.PosteID, 5)
+		controllers.RemLikeFromEngagement(engagement.PosteID, 20)
 	} else {
 		http.Error(w, "Invalid action", http.StatusBadRequest)
 		return

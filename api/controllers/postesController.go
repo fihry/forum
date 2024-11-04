@@ -56,7 +56,7 @@ func GetAllPosts() ([]models.Poste, error) {
 }
 
 // this function will return all posts related to a user to enable the user to see if he liked or disliked the post
-func GetAllPostsByUser(user models.User) ([]models.Poste, error) {
+func GetAllPostsCreatedByUser(user models.User) ([]models.Poste, error) {
 	query := `
 		SELECT 
 			p.id, p.title, p.content, p.author, p.category, 
@@ -103,13 +103,15 @@ func GetAllPostsByUser(user models.User) ([]models.Poste, error) {
 			log.Println(err)
 			return nil, err
 		}
-
-		// Assign liked and disliked based on validity
 		if liked.Valid {
 			poste.Liked = &liked.Bool
 		} else {
 			poste.Liked = new(bool) // or handle as needed
 		}
+		log.Println("like befor: ", *poste.Liked)
+		poste = GetPostByEngagement(userId, poste)
+		log.Println("like after: ", *poste.Liked)
+		// Assign liked and disliked based on validity
 
 		if disliked.Valid {
 			poste.Disliked = &disliked.Bool
@@ -122,6 +124,63 @@ func GetAllPostsByUser(user models.User) ([]models.Poste, error) {
 	return posts, nil
 }
 
+func GetPostByEngagement(userId int, Post models.Poste) models.Poste {
+	query := `SELECT like, dislike FROM engagement WHERE userId = ? AND postId = ?`
+	Database.QueryRow(query, userId, Post.ID).Scan(&Post.Liked, &Post.Disliked)
+	return Post
+}
+
+func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
+	query := `
+		SELECT
+			p.id, p.title, p.content, p.author, p.category,
+			p.likesCount, p.dislikesCount,
+			e.like AS liked, e.dislike AS disliked
+			FROM posts p
+			LEFT JOIN engagement e ON p.id = e.postId AND e.userId = ?
+			`
+	stmt, err := Database.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query(userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	posts := []models.Poste{}
+	for rows.Next() {
+		poste := models.Poste{}
+		var liked, disliked sql.NullBool
+		err := rows.Scan(
+			&poste.ID,
+			&poste.Title,
+			&poste.Content,
+			&poste.Author,
+			&poste.Category,
+			&poste.LikesCount,
+			&poste.DislikeCount,
+			&liked,
+			&disliked)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		if liked.Valid {
+			poste.Liked = &liked.Bool
+		} else {
+			poste.Liked = new(bool)
+		}
+		if disliked.Valid {
+			poste.Disliked = &disliked.Bool
+		} else {
+			poste.Disliked = new(bool)
+		}
+		posts = append(posts, poste)
+	}
+	return posts, nil
+}
 func GetPoste(id int) (models.Poste, error) {
 	poste := models.Poste{}
 	stmt, err := Database.Prepare("SELECT * FROM posts WHERE id = ?")
