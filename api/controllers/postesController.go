@@ -124,11 +124,7 @@ func GetAllPostsCreatedByUser(user models.User) ([]models.Poste, error) {
 	return posts, nil
 }
 
-func GetPostByEngagement(userId int, Post models.Poste) models.Poste {
-	query := `SELECT like, dislike FROM engagement WHERE userId = ? AND postId = ?`
-	Database.QueryRow(query, userId, Post.ID).Scan(&Post.Liked, &Post.Disliked)
-	return Post
-}
+
 
 func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 	query := `

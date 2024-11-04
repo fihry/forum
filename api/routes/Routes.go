@@ -18,6 +18,7 @@ func ApiRoutes() http.Handler {
 	mux.Handle("/api/posts", http.HandlerFunc(handlers.PostsHandler))
 	mux.Handle("/api/createPost", http.HandlerFunc(handlers.CreatePostHandler))
 	mux.Handle("/api/posts/like", http.HandlerFunc(handlers.LikePostHandler))
+	mux.Handle("/api/posts/dislike", http.HandlerFunc(handlers.DislikePostHandler))
 	return mux
 }
 

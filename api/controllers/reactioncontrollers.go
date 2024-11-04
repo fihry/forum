@@ -101,12 +101,12 @@ func GetLIkesAndDislike(postId int) (int, int, error) {
 }
 
 func AddLikeToEngament(postId, userId int) error {
-	stmt, err := Database.Prepare("INSERT INTO engagement (postId, userId, like) VALUES (?, ?, ?)")
+	stmt, err := Database.Prepare("INSERT INTO engagement (postId, userId, like, dislike) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(postId, userId, true)
+	_, err = stmt.Exec(postId, userId, true, false)
 	if err != nil {
 		return err
 	}
@@ -114,12 +114,12 @@ func AddLikeToEngament(postId, userId int) error {
 }
 
 func UpdateLikeToEngament(postId, userId int) error {
-	stmt, err := Database.Prepare("UPDATE engagement SET like =? WHERE postId =? AND userId =?")
+	stmt, err := Database.Prepare("UPDATE engagement SET like =? dislike =? WHERE postId =? AND userId =?")
 	if err != nil {
 		return AddDislikeToEngament(postId, userId)
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(true, postId, userId)
+	_, err = stmt.Exec(true, false, postId, userId)
 	if err != nil {
 		return err
 	}
@@ -127,12 +127,12 @@ func UpdateLikeToEngament(postId, userId int) error {
 }
 
 func AddDislikeToEngament(postId, userId int) error {
-	stmt, err := Database.Prepare("INSERT INTO engagement (postId, userId, dislike) VALUES (?, ?, ?)")
+	stmt, err := Database.Prepare("INSERT INTO engagement (postId, userId, like, dislike) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(postId, userId, true)
+	_, err = stmt.Exec(postId, userId,false, true)
 	if err != nil {
 		return err
 	}
@@ -153,25 +153,27 @@ func UpdateDislikeToEngagement(postId, userId int) error {
 }
 
 func RemLikeFromEngagement(postId, userId int) error {
-	stmt, err := Database.Prepare("DELETE FROM engagement WHERE postId = ? AND userId = ? AND like = ?")
+	stmt, err := Database.Prepare("UPDATE engagement SET like =? WHERE postId = ? AND userId = ?")
 	if err != nil {
+		fmt.Println("error in prepare statement", err)
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(postId, userId, true)
+	_, err = stmt.Exec(false, postId, userId)
 	if err != nil {
+		fmt.Println("error in execute statement", err)
 		return err
 	}
 	return nil
 }
 
 func RemDislikeFromEngagement(postId, userId int) error {
-	stmt, err := Database.Prepare("DELETE FROM engagement WHERE postId = ? AND userId = ? AND dislike = ?")
+	stmt, err := Database.Prepare("UPDATE engagement SET dislike =? WHERE postId = ? AND userId = ?")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(postId, userId, true)
+	_, err = stmt.Exec(true, postId, userId)
 	if err != nil {
 		return err
 	}

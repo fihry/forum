@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -98,70 +97,4 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(post)
 	w.WriteHeader(http.StatusCreated)
-}
-
-// Reaction handlers =================================
-func LikePostHandler(w http.ResponseWriter, r *http.Request) {
-	session, err := r.Cookie("session")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	user, err := controllers.GetUserBySession(session.Value)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	engagement := models.Engagement{}
-	err = json.NewDecoder(r.Body).Decode(&engagement)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Update post likes and dislikes
-	var n int64
-	post := models.Poste{}
-	if engagement.LikeAction == "add" {
-		controllers.GetPostByEngagement(user.ID, post)
-		if *post.Liked {
-			w.WriteHeader(http.StatusConflict)
-			return
-		}
-		controllers.AddLikeToEngament(engagement.PosteID, 5)
-		n, err = controllers.LikePost(engagement.PosteID)
-		post := models.Poste{ID: engagement.PosteID}
-		fmt.Println("post id", post.ID)
-		post = controllers.GetPostByEngagement(20, post)
-		if post.Liked == nil {
-			fmt.Println("post liked")
-			n, err = controllers.LikePost(engagement.PosteID, 20)
-			if err := controllers.AddLikeToEngament(engagement.PosteID, 20); err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-		} else {
-			fmt.Println("post already liked")
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-	} else if engagement.LikeAction == "remove" {
-		if !*post.Liked {
-			w.WriteHeader(http.StatusConflict)
-			return
-		}
-		controllers.RemLikeFromEngagement(engagement.PosteID, 5)
-		n, err = controllers.RemoveLike(engagement.PosteID)
-		n, err = controllers.RemoveLike(engagement.PosteID)
-		controllers.RemLikeFromEngagement(engagement.PosteID, 20)
-	} else {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	if err != nil || n == 0 {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 }
