@@ -13,12 +13,14 @@ func ApiRoutes() http.Handler {
 	// ============== user routes
 	mux.Handle("/api/login", http.HandlerFunc(handlers.LoginHandler))
 	mux.Handle("/api/register", http.HandlerFunc(handlers.RegisterHandler))
+	mux.Handle("/api/logout", http.HandlerFunc(handlers.LogoutHandler))
 
 	// ============== post routes
 	mux.Handle("/api/posts", http.HandlerFunc(handlers.PostsHandler))
 	mux.Handle("/api/createPost", http.HandlerFunc(handlers.CreatePostHandler))
 	mux.Handle("/api/posts/like", http.HandlerFunc(handlers.LikePostHandler))
 	mux.Handle("/api/posts/dislike", http.HandlerFunc(handlers.DislikePostHandler))
+
 	return mux
 }
 

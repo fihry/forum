@@ -59,7 +59,7 @@ func UpdateSessionByUser(user models.User) (models.User, error) {
 	if err != nil {
 		return user, fmt.Errorf("failed to execute statement: %w", err)
 	}
-	log.Println("Session updated", user.SessionKey, user.ExpireDate, user.Username)
+
 	return user, nil
 }
 
@@ -92,3 +92,5 @@ func DeleteSession(Key string) error {
 	}
 	return nil
 }
+
+

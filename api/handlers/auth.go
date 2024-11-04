@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -59,7 +58,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create session
 	session, err := controllers.UpdateSessionByUser(user)
-	log.Println("Session", session.SessionKey, session.ExpireDate, session.Username)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
@@ -136,7 +134,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Create user
 	err = controllers.CreateUser(user)
 	if err != nil {
-		fmt.Println("Error creating user", err)
+		log.Println("Error creating user", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -156,4 +154,35 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		Secure:  true,
 	})
 	w.WriteHeader(http.StatusCreated)
+}
+
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	session, err := r.Cookie("session")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	user, err := controllers.GetUserBySession(session.Value)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	err = controllers.DeleteSession(user.Username)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session",
+		Value:   "",
+		Expires: user.ExpireDate,
+		MaxAge:  -1,
+		Secure:  true,
+	})
+	w.WriteHeader(http.StatusOK)
 }

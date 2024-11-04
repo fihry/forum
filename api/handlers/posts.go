@@ -29,7 +29,6 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// User is authenticated; get user information based on session
 	user, err := controllers.GetUserBySession(session.Value)
-	log.Println("username by session", user.Username)
 	if err != nil {
 		// Invalid session; return all posts without engagement info
 		posts, err := controllers.GetAllPosts()
@@ -87,6 +86,8 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid data", http.StatusBadRequest)
 		return
 	}
+	// create time for post
+	post.CreatedAt = utils.GetCurrentTime()
 	// Create new post here and return the created post
 	id, err := controllers.CreatePoste(post)
 	if err != nil {

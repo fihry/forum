@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// print the location of the server
-	log.Println("\033[32mServer is running on http://localhost" + port + "...🚀\033[0m")
+	log.Println("\033[32mServer is running on http://localhost" + port + " ...🚀\033[0m")
 
 	// init database
 	err = controllers.InitDB()

@@ -15,7 +15,7 @@ async function loadData(posts) {
             <div class="info">
                 <span>${post.category}</span>
                 <span>${post.author}</span>
-                <span>3 min</span>
+                <span>${post.created_at ? post.created_at : 4+"minuts ago"}</span>
             </div>
             <div class="content">
                 <h2>${post.title}</h2>

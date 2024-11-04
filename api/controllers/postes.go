@@ -50,15 +50,15 @@ func GetAllPosts() ([]models.Poste, error) {
 			log.Println(err)
 			return nil, err
 		}
+		poste.Comments = GetPostComments(poste.ID)
 		posts = append(posts, poste)
 	}
 	return posts, nil
 }
 
-// this function will return all posts related to a user to enable the user to see if he liked or disliked the post
 func GetAllPostsCreatedByUser(user models.User) ([]models.Poste, error) {
 	query := `
-		SELECT 
+	SELECT 
 			p.id, p.title, p.content, p.author, p.category, 
 			p.likesCount, p.dislikesCount,
 			e.like AS liked, e.dislike AS disliked 
@@ -124,8 +124,7 @@ func GetAllPostsCreatedByUser(user models.User) ([]models.Poste, error) {
 	return posts, nil
 }
 
-
-
+// this function will return all posts related to a user to enable the user to see if he liked or disliked the post
 func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 	query := `
 		SELECT
@@ -177,6 +176,7 @@ func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 	}
 	return posts, nil
 }
+
 func GetPoste(id int) (models.Poste, error) {
 	poste := models.Poste{}
 	stmt, err := Database.Prepare("SELECT * FROM posts WHERE id = ?")
@@ -258,6 +258,41 @@ func GetPostsByAuthor(author string) ([]models.Poste, error) {
 		posts = append(posts, poste)
 	}
 	return posts, nil
+}
+
+func GetPostComments(postId int) []models.Comment {
+	stmt, err := Database.Prepare("SELECT * FROM comments WHERE postId = ?")
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query(postId)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+	comments := []models.Comment{}
+	for rows.Next() {
+		comment := models.Comment{}
+		err := rows.Scan(
+			&comment.ID,
+			&comment.PosteID,
+			&comment.Author,
+			&comment.Content,
+			&comment.LikesCount,
+			&comment.DislikeCount,
+			&comment.Liked,
+			&comment.Disliked,
+		)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		comments = append(comments, comment)
+	}
+	return comments
 }
 
 func AddComment(C models.Comment) (int64, error) {

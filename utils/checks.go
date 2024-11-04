@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"regexp"
+	"time"
 
 	"forum/api/models"
 )
@@ -91,4 +92,8 @@ func CheckDataForPost(postData models.Poste) (bool, error) {
 		return false, errors.New("content is required")
 	}
 	return true, nil
+}
+
+func GetCurrentTime() string {
+	return time.Now().Format("2006-01-02 15:04:05")
 }
