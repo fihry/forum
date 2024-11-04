@@ -101,39 +101,96 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 // Reaction handlers =================================
 func LikePostHandler(w http.ResponseWriter, r *http.Request) {
-	// session, err := r.Cookie("session")
-	// if err != nil {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
-	// user, err := controllers.GetUserBySession(session.Value)
-	// if err != nil {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
-	engagement := models.Engagement{}
-	err := json.NewDecoder(r.Body).Decode(&engagement)
+	session, err := r.Cookie("session")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	user, err := controllers.GetUserBySession(session.Value)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	engagement := models.Engagement{}
+	err = json.NewDecoder(r.Body).Decode(&engagement)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	// Update post likes and dislikes
 	var n int64
+	post := models.Poste{}
 	if engagement.LikeAction == "add" {
-		n, err = controllers.LikePost(engagement.PosteID)
+		controllers.GetPostByEngagement(user.ID, post)
+		if *post.Liked {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
 		controllers.AddLikeToEngament(engagement.PosteID, 5)
+		n, err = controllers.LikePost(engagement.PosteID)
 	} else if engagement.LikeAction == "remove" {
-		n, err = controllers.RemoveLike(engagement.PosteID)
+		if !*post.Liked {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
 		controllers.RemLikeFromEngagement(engagement.PosteID, 5)
+		n, err = controllers.RemoveLike(engagement.PosteID)
 	} else {
-		http.Error(w, "Invalid action", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if err != nil || n == 0 {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	w.WriteHeader(http.StatusOK)
+}
 
+
+func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
+	session, err := r.Cookie("session")
+    if err != nil {
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+    user, err := controllers.GetUserBySession(session.Value)
+    if err != nil {
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+    engagement := models.Engagement{}
+    err = json.NewDecoder(r.Body).Decode(&engagement)
+    if err != nil {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+    }
+
+    // Update post likes and dislikes
+    var n int64
+    post := models.Poste{}
+	if engagement.DislikeAction == "add" {
+		controllers.GetPostByEngagement(user.ID, post)
+        if *post.Disliked {
+            w.WriteHeader(http.StatusConflict)
+            return
+        }
+        controllers.AddDislikeToEngament(engagement.PosteID, 5)
+        n, err = controllers.LikePost(engagement.PosteID)
+    } else if engagement.DislikeAction == "remove" {
+		if !*post.Disliked {
+            w.WriteHeader(http.StatusConflict)
+            return
+        }
+		controllers.RemDislikeFromEngagement(engagement.PosteID, 5)
+		n, err = controllers.RemoveDislike(engagement.PosteID)
+		} else {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+    }
+	if err != nil || n == 0 {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
 	w.WriteHeader(http.StatusOK)
 }

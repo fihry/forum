@@ -1,17 +1,21 @@
 export async function like(post, card, likeButton) {
-    console.log(post.id)
     const icon = likeButton.querySelector('i'); // Get the icon element
     post.liked = !post.liked; // Toggle liked state
     post.likes_count += post.liked ? 1 : -1; // Update likes count
 
     const action = post.liked ? 'add' : 'remove';
-    console.log(action, post.id)
-    await fetch('/api/posts/like', {
+    const resp = await fetch('/api/posts/like', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({post_id: post.id, like_action: action}),})
+    if (!resp.ok) {
+        console.log(resp)
+        // location.replace("/login");
+        return;
+    }
+
     // Update the icon color
     icon.style.color = post.liked ? 'blue' : 'white';
 

@@ -32,7 +32,7 @@ async function loadData(posts) {
                         <button class="dislike"><i style="color: ${post.disliked ? 'blue' : 'white'};" class="fi fi-rr-hand"></i></button>
                     </div>
                 </div>
-                <button class="comment"><span class="comment-count">${post.comments?.length}</span> comments</button>
+                <button class="comment"><span class="comment-count">${post.comments ?post.comments.length: 'no'}</span> comments</button>
             </div>
         `;
         //add event listeners
