@@ -11,8 +11,7 @@ export async function like(post, card, likeButton) {
         },
         body: JSON.stringify({post_id: post.id, like_action: action}),})
     if (!resp.ok) {
-        console.log(resp)
-        // location.replace("/login");
+        window.location.replace("/login");
         return;
     }
 
@@ -29,12 +28,16 @@ export async function dislike(post, card, dislikeButton) {
     post.disliked =!post.disliked; // Toggle disliked state
     //send data to the server
     const action = post.disliked ? 'add' : 'remove';
-    await fetch('/api/posts/dislike', {
+    const resp = await fetch('/api/posts/dislike', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ post_id: post.id, dislike_action: action}),})
+    if (!resp.ok) {
+        window.location.replace("/login");
+        return;
+    }
     post.dislike_count += post.disliked ? 1 : -1; // Update dislikes count
 
     // Update the icon color

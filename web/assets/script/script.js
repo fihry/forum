@@ -71,7 +71,6 @@ async function loadData(posts) {
             dislike(post, card, dislikeButton)
         } );
         container.appendChild(card)
-        console.log(post)
     }
 }
 

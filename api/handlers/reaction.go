@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"forum/api/controllers"
@@ -27,31 +28,25 @@ func LikePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update post likes and dislikes
 	var n int64
-	// post := models.Poste{}
-	// controllers.GetPostByEngagement(user.ID, post)
-	// fmt.Println(post.Liked)
 	if engagement.LikeAction == "add" {
-		// if post.Liked != nil {
-		// 	w.WriteHeader(http.StatusConflict)
-		// 	return
-		// }
-		controllers.AddLikeToEngament(engagement.PosteID, user.ID)
+		err = controllers.UpdateLikeToEngagement(engagement.PosteID, user.ID)
+		if err != nil {
+			fmt.Println(err)
+		}
 		n, err = controllers.LikePost(engagement.PosteID)
 	} else if engagement.LikeAction == "remove" {
-		// if post.Liked == nil {
-		// 	w.WriteHeader(http.StatusConflict)
-		// 	return
-		// }
-		controllers.RemLikeFromEngagement(engagement.PosteID, user.ID)
+		err = controllers.RemLikeFromEngagement(engagement.PosteID, user.ID)
+		if err != nil {
+			fmt.Println(err)
+		}
 		n, err = controllers.RemoveLike(engagement.PosteID)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if err != nil || n == 0 {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -77,28 +72,32 @@ func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Update post likes and dislikes
 	var n int64
-	post := models.Poste{}
 	if engagement.DislikeAction == "add" {
-		controllers.GetPostByEngagement(user.ID, post)
-		if post.Disliked != nil {
-			w.WriteHeader(http.StatusConflict)
+		fmt.Println("add Dislike")
+		err = controllers.UpdateDislikeToEngagement(engagement.PosteID, user.ID)
+		if err != nil {
+			fmt.Println("updatedislike function return:", err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		controllers.AddDislikeToEngament(engagement.PosteID, user.ID)
-		n, err = controllers.LikePost(engagement.PosteID)
+		n, err = controllers.DislikePost(engagement.PosteID)
 	} else if engagement.DislikeAction == "remove" {
-		if post.Disliked == nil {
-			w.WriteHeader(http.StatusConflict)
+		fmt.Println("remove Dislike")
+		err = controllers.RemDislikeFromEngagement(engagement.PosteID, user.ID)
+		fmt.Println("rm Dislike return err:", err)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		controllers.RemDislikeFromEngagement(engagement.PosteID, user.ID)
 		n, err = controllers.RemoveDislike(engagement.PosteID)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if err != nil || n == 0 {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println("err in dislike counter function:", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
