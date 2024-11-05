@@ -5,17 +5,39 @@ async function getAllPosts() {
     const posts = await jsonData.json();
     return posts
 }
+// THIS FUNCTION FORMATS THE DATE 20-2024-11-05T19:30:00Z TO "2 years ago"
+function formatTime(time) {
+    const itemTime = new Date(time).getTime();
+    const currentTime = new Date()
+    const timeDiff = currentTime - itemTime;
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor(timeDiff / (1000 * 60));
+    const seconds = Math.floor(timeDiff / 1000);
+    if (days > 0) {
+        return `${days} days ago`;
+    } else if (hours > 0) {
+        return `${hours} hours ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minutes ago`;
+    } else if (seconds > 0) {
+        return `${seconds} seconds ago`;
+    }else {
+        return "just now"
+    }
+}
 
 async function loadData(posts) {
     const container = document.getElementById('container')
     for (let post of posts) {
+        post.created_at = formatTime(post.created_at);
         const card = document.createElement('div');
         card.className = 'post';
         card.innerHTML = `
             <div class="info">
                 <span>${post.category}</span>
                 <span>${post.author}</span>
-                <span>${post.created_at ? post.created_at : 4+"minuts ago"}</span>
+                <span>${post.created_at ? post.created_at : ""}</span>
             </div>
             <div class="content">
                 <h2>${post.title}</h2>
@@ -49,8 +71,11 @@ async function loadData(posts) {
             dislike(post, card, dislikeButton)
         } );
         container.appendChild(card)
+        console.log(post)
     }
 }
+
+
 
 async function main() {
     const posts = await getAllPosts();

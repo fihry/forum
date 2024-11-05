@@ -25,7 +25,7 @@ func CreatePoste(P models.Poste) (int64, error) {
 }
 
 func GetAllPosts() ([]models.Poste, error) {
-	stmt, err := Database.Prepare("SELECT id, title,content,author,category,likesCount,dislikesCount FROM posts")
+	stmt, err := Database.Prepare("SELECT id,title,createdAt,content,author,category,likesCount,dislikesCount FROM posts")
 	if err != nil {
 		return nil, err
 	}
@@ -41,6 +41,7 @@ func GetAllPosts() ([]models.Poste, error) {
 		err := rows.Scan(
 			&poste.ID,
 			&poste.Title,
+			&poste.CreatedAt,
 			&poste.Content,
 			&poste.Author,
 			&poste.Category,
@@ -56,79 +57,11 @@ func GetAllPosts() ([]models.Poste, error) {
 	return posts, nil
 }
 
-func GetAllPostsCreatedByUser(user models.User) ([]models.Poste, error) {
-	query := `
-	SELECT 
-			p.id, p.title, p.content, p.author, p.category, 
-			p.likesCount, p.dislikesCount,
-			e.like AS liked, e.dislike AS disliked 
-		FROM 
-			posts p
-		LEFT JOIN 
-			engagement e ON p.id = e.postId AND e.userId = ?
-		WHERE 
-			p.author = ?`
-
-	stmt, err := Database.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-
-	userId := user.ID // Make sure user.ID is populated correctly
-
-	rows, err := stmt.Query(userId, user.Username)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	posts := []models.Poste{}
-	for rows.Next() {
-		poste := models.Poste{}
-		var liked, disliked sql.NullBool // Use sql.NullBool for handling potential NULL values
-
-		err := rows.Scan(
-			&poste.ID,
-			&poste.Title,
-			&poste.Content,
-			&poste.Author,
-			&poste.Category,
-			&poste.LikesCount,
-			&poste.DislikeCount,
-			&liked,
-			&disliked,
-		)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		if liked.Valid {
-			poste.Liked = &liked.Bool
-		} else {
-			poste.Liked = new(bool) // or handle as needed
-		}
-		log.Println("like befor: ", *poste.Liked)
-		poste = GetPostByEngagement(userId, poste)
-		log.Println("like after: ", *poste.Liked)
-		// Assign liked and disliked based on validity
-
-		if disliked.Valid {
-			poste.Disliked = &disliked.Bool
-		} else {
-			poste.Disliked = new(bool) // or handle as needed
-		}
-
-		posts = append(posts, poste)
-	}
-	return posts, nil
-}
-
 // this function will return all posts related to a user to enable the user to see if he liked or disliked the post
 func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 	query := `
 		SELECT
-			p.id, p.title, p.content, p.author, p.category,
+			p.id, p.title,p.createdAt, p.content, p.author, p.category,
 			p.likesCount, p.dislikesCount,
 			e.like AS liked, e.dislike AS disliked
 			FROM posts p
@@ -151,6 +84,7 @@ func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 		err := rows.Scan(
 			&poste.ID,
 			&poste.Title,
+			&poste.CreatedAt,
 			&poste.Content,
 			&poste.Author,
 			&poste.Category,
@@ -187,6 +121,7 @@ func GetPoste(id int) (models.Poste, error) {
 	err = stmt.QueryRow(id).Scan(
 		&poste.ID,
 		&poste.Title,
+		&poste.CreatedAt,
 		&poste.Content,
 		&poste.Author,
 		&poste.Category,
@@ -217,6 +152,7 @@ func GetPostsByCategory(category string) ([]models.Poste, error) {
 		err := rows.Scan(
 			&poste.ID,
 			&poste.Title,
+			&poste.CreatedAt,
 			&poste.Content,
 			&poste.Author,
 			&poste.Category,
@@ -247,6 +183,7 @@ func GetPostsByAuthor(author string) ([]models.Poste, error) {
 		err := rows.Scan(
 			&poste.ID,
 			&poste.Title,
+			&poste.CreatedAt,
 			&poste.Content,
 			&poste.Author,
 			&poste.Category,
@@ -279,6 +216,7 @@ func GetPostComments(postId int) []models.Comment {
 		err := rows.Scan(
 			&comment.ID,
 			&comment.PosteID,
+			&comment.CreatedAt,
 			&comment.Author,
 			&comment.Content,
 			&comment.LikesCount,
@@ -296,12 +234,12 @@ func GetPostComments(postId int) []models.Comment {
 }
 
 func AddComment(C models.Comment) (int64, error) {
-	stmt, err := Database.Prepare("INSERT INTO comments (content, author, post_id) VALUES (?, ?, ?)")
+	stmt, err := Database.Prepare("INSERT INTO comments (content, author, post_id, createdAt) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(C.Content, C.Author, C.ID)
+	result, err := stmt.Exec(C.Content, C.Author, C.ID, C.CreatedAt)
 	if err != nil {
 		return 0, err
 	}
@@ -329,6 +267,7 @@ func GetCommentsByPostId(id int) ([]models.Comment, error) {
 		err := rows.Scan(
 			&comment.ID,
 			&comment.Content,
+			&comment.CreatedAt,
 			&comment.Author,
 			&comment.ID)
 		if err != nil {

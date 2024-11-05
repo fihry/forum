@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
+    createdAt DATETIME,
     content TEXT,
     author VARCHAR(20) NOT NULL,
     category TEXT NOT NULL,
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY,
     postId INTEGER,
+    createdAt DATETIME,
     author VARCHAR(20) NOT NULL,
     content TEXT,
     likesCount INTEGER,

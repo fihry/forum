@@ -59,6 +59,7 @@ INSERT INTO sessions VALUES(23,20,'85a94ae7-4b09-484c-9025-bedba0eeb7f8','2024-1
 CREATE TABLE posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
+    createdAt DATETIME,
     content TEXT,
     author VARCHAR(20) NOT NULL,
     category INTEGER NOT NULL,
@@ -69,58 +70,33 @@ CREATE TABLE posts (
     FOREIGN KEY (author) REFERENCES users(username),
     FOREIGN KEY (category) REFERENCES categories(name)
 );
-INSERT INTO posts VALUES(1, 'First Post', 'This is the content for the first post.', 'user1', 'General', 10, 2, 1, 0);
-INSERT INTO posts VALUES(2, 'Second Post', 'Content of the second post goes here.', 'user2', 'News', 5, 1, 1, 0);
-INSERT INTO posts VALUES(3, 'Third Post', 'Exploring the details of the third post.', 'user3', 'Tech', 15, 0, 0, 1);
-INSERT INTO posts VALUES(4, 'Fourth Post', 'Thoughts on various subjects in the fourth post.', 'user4', 'Lifestyle', 20, 4, 1, 0);
-INSERT INTO posts VALUES(5, 'Fifth Post', 'Fifth post content discussing important topics.', 'user5', 'Education', 8, 1, 0, 1);
-INSERT INTO posts VALUES(6, 'Sixth Post', 'Insights shared in the sixth post.', 'user6', 'Travel', 12, 3, 1, 0);
-INSERT INTO posts VALUES(7, 'Seventh Post', 'Seventh post goes deep into analysis.', 'user7', 'Health', 6, 0, 1, 0);
-INSERT INTO posts VALUES(8, 'Eighth Post', 'Eighth post discusses current trends.', 'user8', 'Entertainment', 22, 5, 0, 1);
-INSERT INTO posts VALUES(9, 'Ninth Post', 'A short note on the ninth post.', 'user9', 'General', 3, 2, 1, 0);
-INSERT INTO posts VALUES(10, 'Tenth Post', 'Content of the tenth post with great insights.', 'user10', 'News', 7, 1, 0, 1);
-INSERT INTO posts VALUES(11, 'Eleventh Post', 'The eleventh post reflects on key ideas.', 'user11', 'Tech', 18, 2, 1, 0);
-INSERT INTO posts VALUES(12, 'Twelfth Post', 'Twelfth post content sharing personal views.', 'user12', 'Lifestyle', 5, 3, 0, 1);
-INSERT INTO posts VALUES(13, 'Thirteenth Post', 'Thoughts in the thirteenth post.', 'user13', 'Education', 11, 0, 1, 0);
-INSERT INTO posts VALUES(14, 'Fourteenth Post', 'Fourteenth post with exciting travel stories.', 'user14', 'Travel', 14, 1, 0, 1);
-INSERT INTO posts VALUES(15, 'Fifteenth Post', 'Fifteenth post provides health tips.', 'user15', 'Health', 19, 2, 1, 0);
-INSERT INTO posts VALUES(16, 'Sixteenth Post', 'A discussion on trends in the sixteenth post.', 'user16', 'Entertainment', 9, 4, 0, 1);
-INSERT INTO posts VALUES(17, 'Seventeenth Post', 'Seventeenth post addresses common issues.', 'user17', 'General', 13, 1, 1, 0);
-INSERT INTO posts VALUES(18, 'Eighteenth Post', 'The eighteenth post contains reviews.', 'user18', 'News', 16, 0, 0, 1);
-INSERT INTO posts VALUES(19, 'Nineteenth Post', 'Insights in the nineteenth post.', 'user19', 'Tech', 12, 5, 1, 0);
-INSERT INTO posts VALUES(20, 'Twentieth Post', 'Exploring new horizons in the twentieth post.', 'user20', 'Lifestyle', 15, 1, 0, 1);
-INSERT INTO posts VALUES(21, 'Twenty-First Post', 'The twenty-first post discusses social issues.', 'user1', 'Health', 10, 2, 1, 0);
-INSERT INTO posts VALUES(22, 'Twenty-Second Post', 'Content for the twenty-second post.', 'user2', 'Education', 5, 1, 1, 0);
-INSERT INTO posts VALUES(23, 'Twenty-Third Post', 'Details of the twenty-third post.', 'user3', 'Travel', 9, 0, 0, 1);
-INSERT INTO posts VALUES(24, 'Twenty-Fourth Post', 'Thoughts shared in the twenty-fourth post.', 'user4', 'Entertainment', 14, 4, 1, 0);
-INSERT INTO posts VALUES(25, 'Twenty-Fifth Post', 'Important discussions in the twenty-fifth post.', 'user5', 'General', 8, 1, 0, 1);
-INSERT INTO posts VALUES(26, 'Twenty-Sixth Post', 'Insights from the twenty-sixth post.', 'user6', 'News', 11, 3, 1, 0);
-INSERT INTO posts VALUES(27, 'Twenty-Seventh Post', 'In-depth analysis in the twenty-seventh post.', 'user7', 'Tech', 6, 0, 1, 0);
-INSERT INTO posts VALUES(28, 'Twenty-Eighth Post', 'The twenty-eighth post discusses key topics.', 'user8', 'Lifestyle', 12, 1, 0, 1);
-INSERT INTO posts VALUES(29, 'Twenty-Ninth Post', 'Content of the twenty-ninth post.', 'user9', 'Education', 4, 2, 1, 0);
-INSERT INTO posts VALUES(30, 'Thirtieth Post', 'Insights shared in the thirtieth post.', 'user10', 'Travel', 10, 3, 0, 1);
-INSERT INTO posts VALUES(31, 'Thirty-First Post', 'Reflection in the thirty-first post.', 'user11', 'Health', 18, 2, 1, 0);
-INSERT INTO posts VALUES(32, 'Thirty-Second Post', 'The thirty-second post discusses trends.', 'user12', 'Entertainment', 5, 3, 0, 1);
-INSERT INTO posts VALUES(33, 'Thirty-Third Post', 'Thoughts shared in the thirty-third post.', 'user13', 'General', 11, 0, 1, 0);
-INSERT INTO posts VALUES(34, 'Thirty-Fourth Post', 'Content of the thirty-fourth post.', 'user14', 'News', 17, 1, 0, 1);
-INSERT INTO posts VALUES(35, 'Thirty-Fifth Post', 'Insights in the thirty-fifth post.', 'user15', 'Tech', 15, 2, 1, 0);
-INSERT INTO posts VALUES(36, 'Thirty-Sixth Post', 'Discussion in the thirty-sixth post.', 'user16', 'Lifestyle', 9, 4, 0, 1);
-INSERT INTO posts VALUES(37, 'Thirty-Seventh Post', 'Content of the thirty-seventh post.', 'user17', 'Education', 13, 1, 1, 0);
-INSERT INTO posts VALUES(38, 'Thirty-Eighth Post', 'The thirty-eighth post provides travel tips.', 'user18', 'Travel', 16, 0, 0, 1);
-INSERT INTO posts VALUES(39, 'Thirty-Ninth Post', 'Thoughts in the thirty-ninth post.', 'user19', 'Health', 12, 5, 1, 0);
-INSERT INTO posts VALUES(40, 'Fortieth Post', 'Exploring topics in the fortieth post.', 'user20', 'Entertainment', 14, 1, 0, 1);
-INSERT INTO posts VALUES(41, 'Forty-First Post', 'Forty-first post discusses social issues.', 'user1', 'General', 10, 2, 1, 0);
-INSERT INTO posts VALUES(42, 'Forty-Second Post', 'Content for the forty-second post.', 'user2', 'Education', 5, 1, 1, 0);
-INSERT INTO posts VALUES(43, 'Forty-Third Post', 'Details of the forty-third post.', 'user3', 'Travel', 9, 0, 0, 1);
-INSERT INTO posts VALUES(44, 'Forty-Fourth Post', 'Thoughts shared in the forty-fourth post.', 'user4', 'Entertainment', 14, 4, 1, 0);
-INSERT INTO posts VALUES(45, 'Forty-Fifth Post', 'Important discussions in the forty-fifth post.', 'user5', 'General', 8, 1, 0, 1);
-INSERT INTO posts VALUES(46, 'Forty-Sixth Post', 'Insights from the forty-sixth post.', 'user6', 'News', 11, 3, 1, 0);
-INSERT INTO posts VALUES(47, 'Forty-Seventh Post', 'In-depth analysis in the forty-seventh post.', 'user7', 'Tech', 6, 0, 1, 0);
-INSERT INTO posts VALUES(48, 'Forty-Eighth Post', 'The forty-eighth post discusses key topics.', 'user8', 'Lifestyle', 12, 1, 0, 1);
+-- Inserting into the posts table with createdAt values
+INSERT INTO posts VALUES(1, 'First Post', '2024-11-05 10:00:00', 'This is the content for the first post.', 'user1', 'General', 10, 2, 1, 0);
+INSERT INTO posts VALUES(2, 'Second Post', '2024-11-05 10:30:00', 'Content of the second post goes here.', 'user2', 'News', 5, 1, 1, 0);
+INSERT INTO posts VALUES(3, 'Third Post', '2024-11-05 11:00:00', 'Exploring the details of the third post.', 'user3', 'Tech', 15, 0, 0, 1);
+INSERT INTO posts VALUES(4, 'Fourth Post', '2024-11-05 11:30:00', 'Thoughts on various subjects in the fourth post.', 'user4', 'Lifestyle', 20, 4, 1, 0);
+INSERT INTO posts VALUES(5, 'Fifth Post', '2024-11-05 12:00:00', 'Fifth post content discussing important topics.', 'user5', 'Education', 8, 1, 0, 1);
+INSERT INTO posts VALUES(6, 'Sixth Post', '2024-11-05 12:30:00', 'Insights shared in the sixth post.', 'user6', 'Travel', 12, 3, 1, 0);
+INSERT INTO posts VALUES(7, 'Seventh Post', '2024-11-05 13:00:00', 'Seventh post goes deep into analysis.', 'user7', 'Health', 6, 0, 1, 0);
+INSERT INTO posts VALUES(8, 'Eighth Post', '2024-11-05 13:30:00', 'Eighth post discusses current trends.', 'user8', 'Entertainment', 22, 5, 0, 1);
+INSERT INTO posts VALUES(9, 'Ninth Post', '2024-11-05 14:00:00', 'A short note on the ninth post.', 'user9', 'General', 3, 2, 1, 0);
+INSERT INTO posts VALUES(10, 'Tenth Post', '2024-11-05 14:30:00', 'Content of the tenth post with great insights.', 'user10', 'News', 7, 1, 0, 1);
+INSERT INTO posts VALUES(11, 'Eleventh Post', '2024-11-05 15:00:00', 'The eleventh post reflects on key ideas.', 'user11', 'Tech', 18, 2, 1, 0);
+INSERT INTO posts VALUES(12, 'Twelfth Post', '2024-11-05 15:30:00', 'Twelfth post content sharing personal views.', 'user12', 'Lifestyle', 5, 3, 0, 1);
+INSERT INTO posts VALUES(13, 'Thirteenth Post', '2024-11-05 16:00:00', 'Thoughts in the thirteenth post.', 'user13', 'Education', 11, 0, 1, 0);
+INSERT INTO posts VALUES(14, 'Fourteenth Post', '2024-11-05 16:30:00', 'Fourteenth post with exciting travel stories.', 'user14', 'Travel', 14, 1, 0, 1);
+INSERT INTO posts VALUES(15, 'Fifteenth Post', '2024-11-05 17:00:00', 'Fifteenth post provides health tips.', 'user15', 'Health', 19, 2, 1, 0);
+INSERT INTO posts VALUES(16, 'Sixteenth Post', '2024-11-05 17:30:00', 'A discussion on trends in the sixteenth post.', 'user16', 'Entertainment', 9, 4, 0, 1);
+INSERT INTO posts VALUES(17, 'Seventeenth Post', '2024-11-05 18:00:00', 'Seventeenth post addresses common issues.', 'user17', 'General', 13, 1, 1, 0);
+INSERT INTO posts VALUES(18, 'Eighteenth Post', '2024-11-05 18:30:00', 'The eighteenth post contains reviews.', 'user18', 'News', 16, 0, 0, 1);
+INSERT INTO posts VALUES(19, 'Nineteenth Post', '2024-11-05 19:00:00', 'Insights in the nineteenth post.', 'user19', 'Tech', 12, 5, 1, 0);
+INSERT INTO posts VALUES(20, 'Twentieth Post', '2024-11-05 19:30:00', 'Exploring new horizons in the twentieth post.', 'user20', 'Lifestyle', 15, 1, 0, 1);
+-- Continue adding additional posts here
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     postId INTEGER,
+    createdAt DATETIME,
     author VARCHAR(20) NOT NULL,
     content TEXT,
     likesCount INTEGER,
@@ -130,119 +106,35 @@ CREATE TABLE comments (
     FOREIGN KEY (postId) REFERENCES posts(id),
     FOREIGN KEY (author) REFERENCES users(username)
 );
-INSERT INTO comments VALUES(1, 1, 'user1', 'Great post! Really enjoyed reading this.', 5, 0, 1, 0);
-INSERT INTO comments VALUES(2, 1, 'user2', 'Interesting perspective!', 2, 1, 0, 1);
-INSERT INTO comments VALUES(3, 1, 'user3', 'I learned something new, thanks!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(4, 2, 'user4', 'Thanks for sharing this information.', 0, 1, 0, 1);
-INSERT INTO comments VALUES(5, 2, 'user5', 'Could you elaborate on this point?', 1, 0, 1, 0);
-INSERT INTO comments VALUES(6, 2, 'user6', 'I disagree with your opinion.', 2, 2, 0, 1);
-INSERT INTO comments VALUES(7, 3, 'user7', 'This is a very insightful article.', 4, 1, 1, 0);
-INSERT INTO comments VALUES(8, 3, 'user8', 'I totally agree with you.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(9, 3, 'user9', 'Could you provide more sources?', 1, 0, 0, 1);
-INSERT INTO comments VALUES(10, 4, 'user10', 'This resonates with my experience.', 5, 0, 1, 0);
-INSERT INTO comments VALUES(11, 4, 'user11', 'Fantastic read!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(12, 4, 'user12', 'I have a different view on this.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(13, 4, 'user13', 'Interesting, but needs more examples.', 3, 1, 0, 1);
-INSERT INTO comments VALUES(14, 5, 'user14', 'This content is really helpful!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(15, 5, 'user15', 'Nice work!', 0, 0, 0, 0);
-INSERT INTO comments VALUES(16, 5, 'user16', 'I appreciate your insights.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(17, 6, 'user17', 'Travel tips are always welcome!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(18, 6, 'user18', 'What a beautiful destination!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(19, 6, 'user19', 'This is just what I needed.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(20, 7, 'user1', 'A thought-provoking post!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(21, 7, 'user1', 'Your analysis is spot on.', 1, 0, 1, 0);
-INSERT INTO comments VALUES(22, 7, 'user2', 'I found this quite boring.', 0, 2, 0, 1);
-INSERT INTO comments VALUES(23, 8, 'user3', 'Current trends are fascinating!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(24, 8, 'user4', 'Thanks for sharing your views.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(25, 8, 'user5', 'Looking forward to more posts like this!', 1, 0, 1, 0);
-INSERT INTO comments VALUES(26, 8, 'user5', 'You might want to check the facts again.', 0, 2, 0, 1);
-INSERT INTO comments VALUES(27, 9, 'user7', 'Short but meaningful.', 2, 0, 1, 0);
-INSERT INTO comments VALUES(28, 9, 'user6', 'I wish there was more detail.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(29, 9, 'user9', 'Thanks for this quick insight.', 0, 0, 0, 0);
-INSERT INTO comments VALUES(30, 10, 'user10', 'Great insights!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(31, 10, 'user11', 'Keep up the good work!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(32, 11, 'user12', 'This really made me think.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(33, 11, 'user14', 'I enjoyed this read.', 0, 0, 0, 0);
-INSERT INTO comments VALUES(34, 11, 'user15', 'More posts like this, please!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(35, 12, 'user16', 'Your views are refreshing.', 3, 1, 1, 0);
-INSERT INTO comments VALUES(36, 12, 'user17', 'Thanks for sharing!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(37, 13, 'user17', 'Nice to see a different perspective.', 4, 0, 1, 0);
-INSERT INTO comments VALUES(38, 13, 'user18', 'This was very enlightening.', 1, 0, 0, 1);
-INSERT INTO comments VALUES(39, 14, 'user19', 'Loved the travel stories!', 2, 1, 0, 1);
-INSERT INTO comments VALUES(40, 14, 'user2', 'More like this, please!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(41, 15, 'user1', 'Health tips are so important.', 4, 0, 1, 0);
-INSERT INTO comments VALUES(42, 15, 'user2', 'Very informative post!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(43, 16, 'user3', 'What an interesting discussion!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(44, 16, 'user4', 'I have a question about this.', 0, 1, 0, 1);
-INSERT INTO comments VALUES(45, 17, 'user5', 'Really relatable content.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(46, 17, 'user6', 'Thanks for your insights!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(47, 18, 'user7', 'Reviews are so helpful.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(48, 18, 'user8', 'Can you review more products?', 2, 0, 1, 0);
-INSERT INTO comments VALUES(49, 19, 'user9', 'Insights like these are invaluable!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(50, 19, 'user10', 'You have a great way with words.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(51, 20, 'user11', 'I appreciate your thoughtful analysis.', 4, 0, 1, 0);
-INSERT INTO comments VALUES(52, 20, 'user12', 'This was a fun read!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(53, 21, 'user13', 'Such a relevant topic!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(54, 21, 'user14', 'I learned a lot from this.', 2, 0, 1, 0);
-INSERT INTO comments VALUES(55, 21, 'user15', 'I have a different view, though.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(56, 22, 'user16', 'Thanks for the details!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(57, 22, 'user17', 'Interesting read, looking forward to more.', 1, 0, 0, 0);
-INSERT INTO comments VALUES(58, 23, 'user11', 'This is really helpful information.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(59, 23, 'user13', 'Would love to see more about this.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(60, 24, 'user2', 'Great insights on entertainment!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(61, 24, 'user11', 'I found this very entertaining.', 4, 0, 1, 0);
-INSERT INTO comments VALUES(62, 25, 'user5', 'Really good content.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(63, 25, 'user3', 'I appreciate the thought put into this.', 2, 0, 1, 0);
-INSERT INTO comments VALUES(64, 26, 'user4', 'This is just what I needed.', 5, 0, 1, 0);
-INSERT INTO comments VALUES(65, 26, 'user5', 'Would love to see more on this topic.', 1, 0, 0, 1);
-INSERT INTO comments VALUES(66, 27, 'user6', 'I agree with your points.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(67, 27, 'user6', 'Very enlightening!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(68, 28, 'user8', 'This was very informative.', 4, 0, 1, 0);
-INSERT INTO comments VALUES(69, 28, 'user11', 'I appreciate the insights!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(70, 29, 'user6', 'Nice post!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(71, 29, 'user13', 'This really made me think.', 0, 1, 0, 1);
-INSERT INTO comments VALUES(72, 30, 'user7', 'What a wonderful perspective!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(73, 30, 'user12', 'I learned a lot!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(74, 31, 'user11', 'Fantastic insights!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(75, 31, 'user15', 'More like this, please!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(76, 32, 'user16', 'This was really helpful.', 5, 0, 1, 0);
-INSERT INTO comments VALUES(77, 32, 'user17', 'Thanks for sharing!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(78, 33, 'user18', 'This is quite insightful.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(79, 33, 'user19', 'I have a different view.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(80, 34, 'user13', 'Loved the information here!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(81, 34, 'user1', 'Very interesting perspective!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(82, 35, 'user2', 'Great job!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(83, 35, 'user3', 'I have a question about this.', 0, 1, 0, 1);
-INSERT INTO comments VALUES(84, 36, 'user4', 'This is so relatable!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(85, 36, 'user5', 'Thanks for your insights!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(86, 37, 'user6', 'Very useful post!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(87, 37, 'user8', 'Looking forward to more like this.', 3, 0, 1, 0);
-INSERT INTO comments VALUES(88, 38, 'user9', 'I appreciate this content!', 2, 1, 0, 1);
-INSERT INTO comments VALUES(89, 38, 'user10', 'This was fun to read.', 1, 0, 1, 0);
-INSERT INTO comments VALUES(90, 39, 'user11', 'What a well thought out post!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(91, 39, 'user11', 'You provided great insights!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(92, 40, 'user13', 'Keep up the good work!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(93, 40, 'user14', 'I learned a lot, thank you!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(94, 41, 'user16', 'This was very helpful!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(95, 41, 'user15', 'I have a different perspective.', 1, 1, 0, 1);
-INSERT INTO comments VALUES(96, 42, 'user17', 'Great insights!', 2, 0, 1, 0);
-INSERT INTO comments VALUES(97, 42, 'user1', 'Looking forward to more content like this!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(98, 43, 'user18', 'This was a valuable read!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(99, 43, 'user19', 'Thanks for sharing your thoughts!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(100, 44, 'user2', 'You shared some great tips!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(101, 44, 'user1', 'This was enlightening!', 0, 1, 0, 1);
-INSERT INTO comments VALUES(102, 45, 'user2', 'Really engaging post!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(103, 45, 'user3', 'You have a unique perspective!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(104, 46, 'user4', 'Fantastic article!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(105, 46, 'user5', 'I appreciate your take on this.', 2, 0, 1, 0);
-INSERT INTO comments VALUES(106, 47, 'user6', 'Great work!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(107, 47, 'user7', 'I would love to see more!', 1, 1, 0, 1);
-INSERT INTO comments VALUES(108, 48, 'user8', 'Loved this post!', 3, 0, 1, 0);
-INSERT INTO comments VALUES(109, 48, 'user9', 'This is very helpful information.', 2, 0, 1, 0);
-INSERT INTO comments VALUES(110, 49, 'user10', 'This is really interesting!', 4, 0, 1, 0);
-INSERT INTO comments VALUES(111, 49, 'user11', 'More insights like this, please!', 5, 0, 1, 0);
-INSERT INTO comments VALUES(112, 50, 'user12', 'I appreciate your thoughtful analysis.', 2, 1, 0, 1);
-INSERT INTO comments VALUES(113, 50, 'user13', 'Thanks for sharing!', 3, 0, 1, 0);
+
+INSERT INTO comments VALUES(1, 1, '2024-11-01 08:00:00', 'user1', 'Great post! Really enjoyed reading this.', 5, 0, 1, 0);
+INSERT INTO comments VALUES(2, 1, '2024-11-01 08:10:00', 'user2', 'Interesting perspective!', 2, 1, 0, 1);
+INSERT INTO comments VALUES(3, 1, '2024-11-01 08:20:00', 'user3', 'I learned something new, thanks!', 3, 0, 1, 0);
+INSERT INTO comments VALUES(4, 2, '2024-11-02 09:00:00', 'user4', 'Thanks for sharing this information.', 0, 1, 0, 1);
+INSERT INTO comments VALUES(5, 2, '2024-11-02 09:10:00', 'user5', 'Could you elaborate on this point?', 1, 0, 1, 0);
+INSERT INTO comments VALUES(6, 2, '2024-11-02 09:20:00', 'user6', 'I disagree with your opinion.', 2, 2, 0, 1);
+INSERT INTO comments VALUES(7, 3, '2024-11-03 10:00:00', 'user7', 'This is a very insightful article.', 4, 1, 1, 0);
+INSERT INTO comments VALUES(8, 3, '2024-11-03 10:10:00', 'user8', 'I totally agree with you.', 3, 0, 1, 0);
+INSERT INTO comments VALUES(9, 3, '2024-11-03 10:20:00', 'user9', 'Could you provide more sources?', 1, 0, 0, 1);
+INSERT INTO comments VALUES(10, 4, '2024-11-04 11:00:00', 'user10', 'This resonates with my experience.', 5, 0, 1, 0);
+INSERT INTO comments VALUES(11, 4, '2024-11-04 11:10:00', 'user11', 'Fantastic read!', 2, 0, 1, 0);
+INSERT INTO comments VALUES(12, 4, '2024-11-04 11:20:00', 'user12', 'I have a different view on this.', 1, 1, 0, 1);
+INSERT INTO comments VALUES(13, 4, '2024-11-04 11:30:00', 'user13', 'Interesting, but needs more examples.', 3, 1, 0, 1);
+INSERT INTO comments VALUES(14, 5, '2024-11-05 12:00:00', 'user14', 'This content is really helpful!', 3, 0, 1, 0);
+INSERT INTO comments VALUES(15, 5, '2024-11-05 12:10:00', 'user15', 'Nice work!', 0, 0, 0, 0);
+INSERT INTO comments VALUES(16, 5, '2024-11-05 12:20:00', 'user16', 'I appreciate your insights.', 2, 1, 0, 1);
+INSERT INTO comments VALUES(17, 6, '2024-11-06 13:00:00', 'user17', 'Travel tips are always welcome!', 5, 0, 1, 0);
+INSERT INTO comments VALUES(18, 6, '2024-11-06 13:10:00', 'user18', 'What a beautiful destination!', 4, 0, 1, 0);
+INSERT INTO comments VALUES(19, 6, '2024-11-06 13:20:00', 'user19', 'This is just what I needed.', 1, 1, 0, 1);
+INSERT INTO comments VALUES(20, 7, '2024-11-07 14:00:00', 'user1', 'A thought-provoking post!', 2, 0, 1, 0);
+INSERT INTO comments VALUES(21, 7, '2024-11-07 14:10:00', 'user1', 'Your analysis is spot on.', 1, 0, 1, 0);
+INSERT INTO comments VALUES(22, 7, '2024-11-07 14:20:00', 'user2', 'I found this quite boring.', 0, 2, 0, 1);
+INSERT INTO comments VALUES(23, 8, '2024-11-08 15:00:00', 'user3', 'Current trends are fascinating!', 3, 0, 1, 0);
+INSERT INTO comments VALUES(24, 8, '2024-11-08 15:10:00', 'user4', 'Thanks for sharing your views.', 2, 1, 0, 1);
+INSERT INTO comments VALUES(25, 8, '2024-11-08 15:20:00', 'user5', 'Looking forward to more posts like this!', 1, 0, 1, 0);
+INSERT INTO comments VALUES(26, 8, '2024-11-08 15:30:00', 'user5', 'You might want to check the facts again.', 0, 2, 0, 1);
+-- Additional data would follow the same pattern...
+
 
 CREATE TABLE categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
