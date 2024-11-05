@@ -58,12 +58,11 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
-	var post models.Poste
-	err := json.NewDecoder(r.Body).Decode(&post)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	var post models.Poste
 	// Check if user is authenticated
 	session, err := r.Cookie("session")
 	if err != nil {
@@ -75,7 +74,15 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+
+	// Decode post data from request body
+	err = json.NewDecoder(r.Body).Decode(&post)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	post.Author = user.Username
+
 	// Validate post data
 	ok, err := utils.CheckDataForPost(post)
 	if err != nil {
@@ -86,8 +93,10 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid data", http.StatusBadRequest)
 		return
 	}
+
 	// create time for post
 	post.CreatedAt = utils.GetCurrentTime()
+	
 	// Create new post here and return the created post
 	id, err := controllers.CreatePoste(post)
 	if err != nil {
@@ -96,6 +105,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	post.ID = int(id)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(post)
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(post)
 }
