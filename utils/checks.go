@@ -105,6 +105,9 @@ func CheckDataForComment(commentData models.Comment) error {
 	if commentData.Content == "" {
 		return errors.New("content is required")
 	}
+	if commentData.PosteID < 1 {
+		return errors.New("poste ID is required")
+	}
 	return nil
 }
 

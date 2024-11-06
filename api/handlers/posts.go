@@ -62,7 +62,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	var post models.Poste
 	// Check if user is authenticated
 	session, err := r.Cookie("session")
 	if err != nil {
@@ -76,6 +75,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Decode post data from request body
+	var post models.Poste
 	err = json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
