@@ -51,7 +51,7 @@ func CheckEmailExist(email string) (bool, error) {
 
 func GetUserByName(username string) (models.User, error) {
 	user := models.User{}
-	stmt, err := Database.Prepare("SELECT * FROM users WHERE username = ?")
+	stmt, err := Database.Prepare("SELECT id,username,password,email FROM users WHERE username = ?")
 	if err != nil {
 		return user, err
 	}
@@ -61,6 +61,7 @@ func GetUserByName(username string) (models.User, error) {
 		&user.Username,
 		&user.Password,
 		&user.Email)
+	log.Println("Stored user", user)
 	return user, nil
 }
 

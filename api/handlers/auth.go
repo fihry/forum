@@ -19,18 +19,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var user models.User
 	if err := r.ParseForm(); err != nil {
-		fmt.Println(err)
 		http.Error(w, "Failed to parse form", http.StatusBadRequest)
 		return
 	}
 
 	user.Username = r.FormValue("username")
 	user.Password = r.FormValue("password")
-	fmt.Println(user.Username, user.Password)
+
 	// Validate user data
 	ok, err := utils.CheckDataForLogin(user)
 	if err != nil || !ok {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid data", http.StatusBadRequest)
 		return
 	}
 
@@ -51,15 +50,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+	log.Println("Stored user", storedUser)
 
 	// Compare the provided password with the stored hashed password
 	if !ComparePasswords(storedUser.Password, user.Password) {
+		log.Println("Invalid password", user.Password, storedUser.Password)
 		http.Error(w, "Invalid password", http.StatusUnauthorized)
 		return
 	}
 
 	// Create session
-	session, err := controllers.NewSession(user)
+	newUser, err := controllers.NewSession(storedUser)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
@@ -68,8 +69,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Set session cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
-		Value:    session.SessionKey,
-		Expires:  session.ExpireDate,
+		Value:    newUser.SessionKey,
+		Expires:  newUser.ExpireDate,
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 	})
@@ -83,12 +84,9 @@ func ComparePasswords(hashedPassword, plainPassword string) bool {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Starting RegisterHandler")
-
 	var user models.User
 	err := r.ParseForm()
 	if err != nil {
-		log.Printf("Failed to parse form: %v", err)
 		http.Error(w, "Invalid form data", http.StatusBadRequest)
 		return
 	}
@@ -96,53 +94,48 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user.Password = r.FormValue("password")
 	user.Email = r.FormValue("email")
 
-	log.Printf("Received registration request for username: %s, email: %s", user.Username, user.Email)
-
-	// ... (your existing validation code)
-
+	// Validate user data
+	ok, err := utils.CheckDataForRegister(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !ok {
+		http.Error(w, "Invalid data", http.StatusBadRequest)
+		return
+	}
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Printf("Failed to hash password: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 	user.Password = string(hashedPassword)
+	// Set session cookie
 
 	// Create user
 	newUser, err := controllers.CreateUser(user)
 	if err != nil {
-		log.Printf("Error creating user: %v", err)
+		log.Println("Error creating user", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-
-	log.Printf("User created successfully. ID: %d, Username: %s", newUser.ID, newUser.Username)
 
 	// Create new session
-	sessionUser, err := controllers.NewSession(newUser)
+	newUser, err = controllers.NewSession(newUser)
 	if err != nil {
-		log.Printf("Error creating session: %v", err)
+		log.Println("Error creating session", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
-	}
-
-	log.Printf("Session created successfully. SessionKey: %s, ExpireDate: %v", sessionUser.SessionKey, sessionUser.ExpireDate)
-
-	err = controllers.CheckUserState(newUser.Username)
-	if err != nil {
-		log.Printf("Error checking user state: %v", err)
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    sessionUser.SessionKey,
-		Expires:  sessionUser.ExpireDate,
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
+		Name:    "session",
+		Value:   newUser.SessionKey,
+		Expires: newUser.ExpireDate,
+		Secure:  true,
 	})
 	w.WriteHeader(http.StatusCreated)
-	log.Println("RegisterHandler completed successfully")
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {

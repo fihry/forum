@@ -12,9 +12,9 @@ import (
 	"forum/api/models"
 )
 
-func NewSession(user models.User) (models.User, error) {
-	log.Printf("Starting NewSession for user ID: %d, Username: %s", user.ID, user.Username)
 
+func NewSession(user models.User) (models.User, error) {
+	// create a new session key and set the expiration date to 24 hours from now
 	expireDate := time.Now().Add(24 * time.Hour)
 	UUID, err := uuid.NewV4()
 	if err != nil {
@@ -23,10 +23,9 @@ func NewSession(user models.User) (models.User, error) {
 	}
 	user.SessionKey = UUID.String()
 	user.ExpireDate = expireDate
-
-	log.Printf("Generated SessionKey: %s, ExpireDate: %v", user.SessionKey, user.ExpireDate)
-
-	stmt, err := Database.Prepare("UPDATE users SET session_key = ?, expire_date = ? WHERE id = ?")
+	// update the user's session key and expiration date in the database
+	query := `UPDATE users SET session_key = ?, expire_date = ? WHERE id = ?`
+	stmt, err := Database.Prepare(query)
 	if err != nil {
 		log.Printf("Failed to prepare statement: %v", err)
 		return user, fmt.Errorf("failed to prepare statement: %w", err)

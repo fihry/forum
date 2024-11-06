@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"time"
 
+	"forum/api/controllers"
 	"forum/api/models"
 )
 
@@ -64,6 +65,22 @@ func CheckDataForRegister(userData models.User) (bool, error) {
 	if !checkPasswordLowercase.MatchString(userData.Password) {
 		return false, errors.New("password must contain at least one lowercase letter")
 	}
+	// check username if already exists
+	exist, err := controllers.CheckUserExist(userData.Username)
+	if err != nil {
+		return false, err
+	}
+	if exist {
+		return false, errors.New("username already exists")
+	}
+	// check email if already exists
+	exist, err = controllers.CheckEmailExist(userData.Email)
+	if err != nil {
+		return false, err
+	}
+	if exist {
+		return false, errors.New("email already exists")
+	}
 
 	return true, nil
 }
@@ -72,13 +89,13 @@ func CheckDataForLogin(userData models.User) (bool, error) {
 	if userData.Username == "" {
 		return false, errors.New("username is required")
 	}
-	if len(userData.Username) < 4 {
+	if len(userData.Username) < 4  || len(userData.Username) > 20 {
 		return false, errors.New("username must contain at least 4 characters")
 	}
 	if userData.Password == "" {
 		return false, errors.New("password is required")
 	}
-	if len(userData.Password) < 8 {
+	if len(userData.Password) < 8  {
 		return false, errors.New("password must contain at least 8 characters")
 	}
 	return true, nil
