@@ -96,7 +96,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// create time for post
 	post.CreatedAt = utils.GetCurrentTime()
-	
+
 	// Create new post here and return the created post
 	id, err := controllers.CreatePoste(post)
 	if err != nil {
@@ -107,4 +107,52 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(post)
+}
+
+func FilterPostHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+	}
+	var filter models.Filter
+	err := json.NewDecoder(r.Body).Decode(&filter)
+	if err!= nil {
+        http.Error(w, "Invalid filter data", http.StatusBadRequest)
+        return
+    }
+	userId := 9
+	var posts []models.Poste
+	switch filter.Type {
+	case "category":
+		posts, err = controllers.FilterPostsByCategory(filter.Category)
+        if err!= nil {
+            log.Println(err)
+            http.Error(w, "Internal server error", http.StatusInternalServerError)
+            return
+        }
+	case "like":
+		// TODO: return the posts that the user is liked or disliked it
+		//check if the user already loged
+		
+		//filter by likes and dislikes 
+		posts, err = controllers.FilterByReaction(userId)
+		if err!= nil {
+            log.Println(err)
+            http.Error(w, "Internal server error", http.StatusInternalServerError)
+            return
+        }
+	case "author":
+		//check if the user already loged
+
+		// filter by author of the posts
+		posts, err = controllers.FilterByAuthor(userId)
+        if err!= nil {
+            log.Println(err)
+            http.Error(w, "Internal server error", http.StatusInternalServerError)
+            return
+        }
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(posts)
 }
