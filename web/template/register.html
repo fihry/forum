@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sing up</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="static/css/global.css">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link rel="stylesheet" href="static/css/global.css" />
+    <script defer src="/static/script/auth.js" type="module"></script>
+  </head>
+  <body>
     <div class="registration">
       <div class="signup">
         <h2>become a dragon</h2>
-        <form action="/api/register" method="post">
-            <label for="userName">User name</label>
-            <input type="text" name="username" id="userName" placeholder="User name">
-            <label for="Email">Email</label>
-            <input type="email" name="email" id="Email" placeholder="Email">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password"placeholder="password">
-            <label for="confermpassword">Confirm Password</label>
-            <input type="password" name="confirmPassword" id="confermpassword"placeholder="confirm password">
-            <label for=""></label>
-            <input class="submit" type="submit" value="submit">
+        <form id="register-form">
+          <label for="userName">User name</label>
+          <input
+            type="text"
+            name="username"
+            id="register-username"
+            placeholder="User name"
+          />
+          <label for="Email">Email</label>
+          <input
+            type="email"
+            name="email"
+            id="register-email"
+            placeholder="Email"
+          />
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="register-password"
+            placeholder="password"
+          />
+          <label for="confermpassword">Confirm Password</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            id="register-confirm-password"
+            placeholder="confirm password"
+          />
+          <label for=""></label>
+          <p id="error"></p>
+          <input class="submit" type="submit" value="submit" />
         </form>
-        <div
-        >you already a dragon ? <a href="/login">login here</a>
-    </div>
+        <div>you already a dragon ? <a href="/login">login here</a></div>
       </div>
     </div>
-</body>
+  </body>
 </html>

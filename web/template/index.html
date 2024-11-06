@@ -1,24 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <script src="/static/script/script.js" type="module" ></script>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="static/css/global.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <script src="/static/script/script.js" type="module"></script>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="static/css/global.css" />
     <title>forum</title>
-
-</head>
-<body>
-    <nav>
-        <div class="logo">logo</div>
-        <span>
-            <a class = "login-link" href="/login">login</a>
-            <a class = "register" href="/register">register</a>
-            <a class="newpost" style="display: none;" href="createpost">new post</a>
-        </span>
+  </head>
+  <body>
+    <nav class="navbar" id="navbar">
+      <div class="logo">logo</div>
+      <span id="navbar_actions">
+        <a class="login-link" href="/login">login</a>
+        <a class="register" href="/register">register</a>
+      </span>
     </nav>
-    <div class="container" id ="container"></div>
-</body>
+    <div class="container" id="container"></div>
+
+    <div id="createPostModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="login-content">
+          <h2>Create New Post</h2>
+          <form id="createPostForm">
+            <label for="postTitle">Title</label>
+            <input
+              type="text"
+              id="postTitle"
+              name="title"
+              placeholder="Enter your title"
+              required
+            />
+
+            <label for="postCategory">Category</label>
+            <select id="postCategory" name="category" required>
+              <option value="general">General</option>
+              <option value="technology">Technology</option>
+              <option value="gaming">Gaming</option>
+              <option value="art">Art</option>
+            </select>
+
+            <label for="postContent">Content</label>
+            <textarea
+              id="postContent"
+              name="content"
+              placeholder="Write your post content here"
+              required
+            ></textarea>
+
+            <input type="submit" class="submit" value="Create Post" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

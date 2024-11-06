@@ -2,29 +2,22 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(20) UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS sessions (
-    id INTEGER PRIMARY KEY,
-    username VARCHAR(20) NOT NULL,
-    key TEXT,
-    ExpireDate DATETIME,
-    FOREIGN KEY (username) REFERENCES users(username)
-
-);   
+    email TEXT UNIQUE NOT NULL,
+    session_key TEXT,
+    expire_date  DATETIME
+); 
 
 CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
-    createdAt DATETIME,
+    createdAt DATETIME  DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
     author VARCHAR(20) NOT NULL,
     category TEXT NOT NULL,
-    likesCount INTEGER,
-    dislikesCount INTEGER,
-    liked BOOLEAN,
-    disliked BOOLEAN,
+    likesCount INTEGER  DEFAULT 0,
+    dislikesCount INTEGER DEFAULT 0,
+    liked BOOLEAN  DEFAULT 0,
+    disliked BOOLEAN DEFAULT 0,
     FOREIGN KEY (author) REFERENCES users(username),
     FOREIGN KEY (category) REFERENCES categories(name)
 );

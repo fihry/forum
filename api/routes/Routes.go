@@ -14,6 +14,7 @@ func ApiRoutes() http.Handler {
 	mux.Handle("/api/login", http.HandlerFunc(handlers.LoginHandler))
 	mux.Handle("/api/register", http.HandlerFunc(handlers.RegisterHandler))
 	mux.Handle("/api/logout", http.HandlerFunc(handlers.LogoutHandler))
+	mux.Handle("/api/session_check", http.HandlerFunc(handlers.SessionCheck))
 
 	// ============== post routes
 	mux.Handle("/api/posts", http.HandlerFunc(handlers.PostsHandler))

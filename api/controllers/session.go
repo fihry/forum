@@ -12,75 +12,52 @@ import (
 	"forum/api/models"
 )
 
-func init() {
-	var err error
-	Database, err = sql.Open("sqlite3", "./forum.db")
-	if err != nil {
-		log.Fatalf("failed to open database: %v", err)
-	}
-}
-
 func NewSession(user models.User) (models.User, error) {
+	log.Printf("Starting NewSession for user ID: %d, Username: %s", user.ID, user.Username)
+
 	expireDate := time.Now().Add(24 * time.Hour)
 	UUID, err := uuid.NewV4()
 	if err != nil {
+		log.Printf("Failed to generate UUID: %v", err)
 		return user, fmt.Errorf("failed to generate UUID: %w", err)
 	}
 	user.SessionKey = UUID.String()
 	user.ExpireDate = expireDate
-	stmt, err := Database.Prepare("INSERT OR IGNORE INTO sessions (username, key, ExpireDate) VALUES (?, ?, ?)")
+
+	log.Printf("Generated SessionKey: %s, ExpireDate: %v", user.SessionKey, user.ExpireDate)
+
+	stmt, err := Database.Prepare("UPDATE users SET session_key = ?, expire_date = ? WHERE id = ?")
 	if err != nil {
+		log.Printf("Failed to prepare statement: %v", err)
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.Username, user.SessionKey, expireDate)
+	result, err := stmt.Exec(user.SessionKey, user.ExpireDate, user.ID)
 	if err != nil {
-		return user, fmt.Errorf("failed to execute statement: %w", err)
-	}
-	return user, nil
-}
-
-func UpdateSessionByUser(user models.User) (models.User, error) {
-	expireDate := time.Now().Add(24 * time.Hour)
-	UUID, err := uuid.NewV4()
-	if err != nil {
-		return user, fmt.Errorf("failed to generate UUID: %w", err)
-	}
-	user.SessionKey = UUID.String()
-	user.ExpireDate = expireDate
-	stmt, err := Database.Prepare("UPDATE sessions SET key = ?, ExpireDate = ? WHERE username = ?")
-	if err != nil {
-		return user, fmt.Errorf("failed to prepare statement: %w", err)
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(user.SessionKey, expireDate, user.Username)
-	if err != nil {
+		log.Printf("Failed to execute statement: %v", err)
 		return user, fmt.Errorf("failed to execute statement: %w", err)
 	}
 
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Failed to get rows affected: %v", err)
+		return user, fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	log.Printf("Rows affected: %d", rowsAffected)
+
+	if rowsAffected == 0 {
+		log.Printf("No rows were updated for user ID: %d", user.ID)
+		return user, fmt.Errorf("no rows were updated")
+	}
+
+	log.Printf("Session created successfully for user ID: %d", user.ID)
 	return user, nil
-}
-
-func GetSession(Key string) (models.User, error) {
-	user := models.User{}
-
-	stmt, err := Database.Prepare("SELECT * FROM users WHERE session = ?")
-	if err != nil {
-		return user, fmt.Errorf("failed to prepare statement: %w", err)
-	}
-	defer stmt.Close()
-
-	err = stmt.QueryRow(Key).Scan(&user.ID, &user.SessionKey, &user.ExpireDate)
-	if err != nil {
-		return user, fmt.Errorf("failed to query row: %w", err)
-	}
-	return GetUserById(user.ID)
 }
 
 func DeleteSession(Key string) error {
-	stmt, err := Database.Prepare("DELETE FROM users WHERE session = ?")
+	stmt, err := Database.Prepare("UPDATE  users SET session_key = NULL, expire_date = NULL WHERE session_key = ?")
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -93,4 +70,16 @@ func DeleteSession(Key string) error {
 	return nil
 }
 
+func CheckUserState(username string) error {
+	var id int
+	var sessionKey sql.NullString
+	var expireDate sql.NullTime
 
+	err := Database.QueryRow("SELECT id, session_key, expire_date FROM users WHERE username = ?", username).Scan(&id, &sessionKey, &expireDate)
+	if err != nil {
+		return fmt.Errorf("failed to query user state: %w", err)
+	}
+
+	log.Printf("User state - ID: %d, SessionKey: %v, ExpireDate: %v", id, sessionKey, expireDate)
+	return nil
+}

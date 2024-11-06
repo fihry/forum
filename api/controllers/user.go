@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 
 	"forum/api/models"
 )
@@ -78,32 +79,48 @@ func GetUserById(id int) (models.User, error) {
 	return user, nil
 }
 
-func CreateUser(user models.User) error {
-	stmt, err := Database.Prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec(user.Username, user.Password, user.Email)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+func CreateUser(user models.User) (models.User, error) {
+	log.Printf("Creating user: %s", user.Username)
 
-func GetUserBySession(sessionKey string) (models.User, error) {
-	user := models.User{}
-	stmt, err := Database.Prepare("SELECT u.id, u.username, u.password, u.email FROM users u JOIN sessions s ON u.username = s.username WHERE s.key = ?")
+	stmt, err := Database.Prepare("INSERT INTO users(username, password, email) VALUES(?, ?, ?)")
 	if err != nil {
+		log.Printf("Failed to prepare statement: %v", err)
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 
+	result, err := stmt.Exec(user.Username, user.Password, user.Email)
+	if err != nil {
+		log.Printf("Failed to execute statement: %v", err)
+		return user, fmt.Errorf("failed to execute statement: %w", err)
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Printf("Failed to get last insert id: %v", err)
+		return user, fmt.Errorf("failed to get last insert id: %w", err)
+	}
+
+	user.ID = int(id)
+	log.Printf("User created successfully. ID: %d, Username: %s", user.ID, user.Username)
+	return user, nil
+}
+
+func GetUserBySession(sessionKey string) (models.User, error) {
+	user := models.User{}
+	// get the first user with  the given session key
+	stmt, err := Database.Prepare("SELECT * FROM users WHERE session_key = ?")
+	if err != nil {
+		return user, err
+	}
+	defer stmt.Close()
 	err = stmt.QueryRow(sessionKey).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Password,
-		&user.Email)
+		&user.Email,
+		&user.SessionKey,
+		&user.ExpireDate)
 	if err != nil {
 		return user, fmt.Errorf("failed to execute query: %w", err)
 	}
