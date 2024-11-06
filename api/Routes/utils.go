@@ -1,20 +1,14 @@
-package utils
+package Routes
 
 import (
 	"errors"
+	"forum/api/Models"
 	"regexp"
-
-	"forum/api/models"
 )
 
-func CheckAuth(session string) (bool, error) {
-	if session == "" {
-		return false, errors.New("Unauthorized")
-	}
-	return true, nil
-}
-
-func CheckDataForRegister(userData models.User) (bool, error) {
+// this func will check the data that is being sent to the server
+// and return a response
+func CheckDataForRegister(userData Models.User) (bool, error) {
 	if userData.Username == "" {
 		return false, errors.New("username is required")
 	}
@@ -24,7 +18,6 @@ func CheckDataForRegister(userData models.User) (bool, error) {
 	if userData.Email == "" {
 		return false, errors.New("email is required")
 	}
-
 	// check if data includes special characters to avoid sql injection
 	specialCharRegex := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`)
 	if specialCharRegex.MatchString(userData.Username) {
@@ -40,21 +33,17 @@ func CheckDataForRegister(userData models.User) (bool, error) {
 		return false, errors.New("invalid email format")
 	}
 	// Validate password format
-
 	if len(userData.Password) < 8 {
 		return false, errors.New("password must contain at least 8 characters")
 	}
-
 	checkPasswordUppercase := regexp.MustCompile(`[A-Z]`)
 	if !checkPasswordUppercase.MatchString(userData.Password) {
 		return false, errors.New("password must contain at least one uppercase letter")
 	}
-
 	checkPasswordSpecialChar := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`)
 	if !checkPasswordSpecialChar.MatchString(userData.Password) {
 		return false, errors.New("password must contain at least one special character")
 	}
-
 	checkPasswordNumber := regexp.MustCompile(`[0-9]`)
 	if !checkPasswordNumber.MatchString(userData.Password) {
 		return false, errors.New("password must contain at least one number")
@@ -63,11 +52,10 @@ func CheckDataForRegister(userData models.User) (bool, error) {
 	if !checkPasswordLowercase.MatchString(userData.Password) {
 		return false, errors.New("password must contain at least one lowercase letter")
 	}
-
 	return true, nil
 }
 
-func CheckDataForLogin(userData models.User) (bool, error) {
+func CheckDataForLogin(userData Models.User) (bool, error) {
 	if userData.Username == "" {
 		return false, errors.New("username is required")
 	}
@@ -83,7 +71,7 @@ func CheckDataForLogin(userData models.User) (bool, error) {
 	return true, nil
 }
 
-func CheckDataForPost(postData models.Poste) (bool, error) {
+func CheckDataForPost(postData Models.Poste) (bool, error) {
 	if postData.Title == "" {
 		return false, errors.New("title is required")
 	}

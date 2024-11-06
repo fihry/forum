@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;600;900&family=Source+Serif+Pro:ital,wght@1,600&display=swap');
+
+/* Variables for reusability */
+:root {
+    --color-primary: #26D381;
+    --color-primary-light: #7ef7be;
+    --color-bg: #000000;
+    --color-bg-light: #efefef;
+    --color-text-light: #ffffff;
+    --color-scrollbar: #000000;
+    --font-primary: 'Jost', sans-serif;
+    --font-secondary: 'Source Serif Pro', serif;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    background-color: var(--color-scrollbar);
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(120deg, #fff, var(--color-bg), rgb(62, 143, 55));
+    border-radius: 15px;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    font-family: var(--font-primary);
+    position: relative;
+    background-color: var(--color-bg-light);
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    background-color: rgba(209, 207, 207, 0.48);
+}
+
+.login-content {
+    position: relative;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-bg);
+    color: var(--color-text-light);
+    border-radius: 12px;
+    box-shadow: 8px 10px 12px var(--color-bg-light);
+    padding: 10px;
+}
+
+.login-content h2 {
+    text-align: center;
+    padding: 20px 10px;
+    font-family: var(--font-secondary);
+}
+
+.login-content h2 span {
+    color: var(--color-primary);
+}
+
+#close-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: var(--color-text-light);
+}
+
+#close-form:hover {
+    background-color: var(--color-primary-light);
+    transform: rotate(45deg);
+}
+
+.lwc {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.lwc a {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-decoration: none;
+    border-radius: 8px;
+    background-color: var(--color-bg-light);
+    padding: 5px;
+    color: var(--color-bg);
+    margin: 0 10px;
+}
+
+.lwc a:hover {
+    box-shadow: inset 0 8px 10px #a1ffd3, 0 2px 2px rgb(67, 230, 138);
+}
+
+.lwc img {
+    width: 35px;
+    height: 35px;
+}
+
+.lwc span {
+    padding: 0 5px;
+}
+
+.login-content form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-content form input {
+    min-height: 40px;
+    background-color: var(--color-bg-light);
+    color: var(--color-bg);
+    padding: 10px;
+    border-radius: 15px;
+    border: 1px solid var(--color-primary);
+    font-size: 16px;
+}
+
+.login-content form input:hover {
+    caret-color: var(--color-primary);
+}
+
+.input:last-child {
+    max-width: 80%;
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    margin-left: 10%;
+}
+
+.input:last-child:hover {
+    background-color: #19a061;
+}
+
+.checks {
+    display: flex;
+    justify-content: space-between;
+    color: #d3d3d3;
+}
+
+.checks span {
+    display: flex;
+    align-items: center;
+}
+
+.checks a {
+    color: var(--color-primary);
+}
+
+/* Sign up page */
+.suwep {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(58, 58, 58, 0.75);
+    font-family: var(--font-primary);
+}
+
+.suwep .sign-uwep {
+    width: 40%;
+    min-width: 340px;
+    background-color: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    padding: 20px;
+    color: var(--color-text-light);
+    align-items: center;
+}
+
+.suwep .sign-uwep h2 span {
+    color: #07a35a;
+}
+
+.suwep .sign-uwep form input {
+    width: 100%;
+    height: 40px;
+    border-radius: 15px;
+    margin-top: 5px;
+    color: var(--color-bg);
+    background-color: var(--color-text-light);
+    padding-left: 10px;
+    border: 1px solid var(--color-primary);
+}
+
+.suwep .sign-uwep form .Privacy-agree a {
+    color: #19a061;
+}
+
+.suwep .sign-uwep form .Privacy-agree a:hover {
+    text-decoration: underline;
+}
+
+.suwep .sign-uwep input:last-child {
+    background-color: #07a35a;
+}
+
+.suwep .sign-uwep input:last-child:hover {
+    background-color: var(--color-primary);
+}

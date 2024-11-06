@@ -1,37 +1,34 @@
 package main
 
 import (
+	"forum/api/Routes"
+	"forum/src"
 	"log"
 	"net/http"
-
-	"forum/api/controllers"
-	"forum/api/routes"
-	"forum/utils"
 )
 
 func main() {
-	port, err := utils.GetPort()
+	Port, err := src.GetPort()
 	if err != nil {
 		log.Println(err)
 	}
 	// create a new server
 	server := http.Server{
-		Addr:    "0.0.0.0" + port,
-		Handler: routes.InitRouter(),
+		Addr:    "0.0.0.0" + Port,
+		Handler: src.Routs(),
 	}
-
 	// print the location of the server
-	log.Println("\033[32mServer is running on http://localhost" + port + "...🚀\033[0m")
-
+	log.Println("\033[32mServer is running on port " + Port + "...🚀\033[0m")
+	log.Println("\033[32mhttp://localhost" + Port + "\033[0m")
 	// init database
-	err = controllers.InitDB()
+	db, err := src.InitDB()
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
-
-	// defer close the database connection
-	defer controllers.Database.Close()
-
+	// create a new database
+	Routes.Database.DB = db
+	// close the database connection
+	defer db.Close()
 	// start the server
 	err = server.ListenAndServe()
 	if err != nil {

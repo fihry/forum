@@ -3,23 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/css/global.css">
+    <link rel="stylesheet" href="/static/global.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>Login</title>
 </head>
 <body>
     <div id="login" class="login" for="loginform">
         <div class="login-content">
-            <h2>welcome back dragon</h2>
+            <h2>Login to <span>Forum</span></h2>
+            <div class="lwc">
+                <a href="" class="login-with" id="#"><img src="img/google-symbol.png" alt=""><span>Google</span></a>
+                <a href="" class="login-with" id="#"><img src="img/facebook.png" alt=""><span>Facebook</span></a>
+                <a href="" class="login-with" id="#"><img src="img/github.png" alt=""><span>Github</span></a>
+            </div>
+            <span>Or</span>
             <form action="api/login" method="post" >
                 <label for="Username">User name</label>
                 <input type="text" class="input" id="Username" name="username" placeholder="Email">
                 <label for="password">Password</label>
                 <input type="password" class="input" id="password" name="password" placeholder="Password">
-                <input type="submit" class="submit" value="Sign in">
+                <div class="checks">
+                    <span><input type="checkbox">Remember me</span>
+                    <a href="">Forgot your password?</a>
+                </div>
+                <input type="submit" class="input" value="Sign in">
             </form>
-            <div
-                class="new-acount" id="new-acount">are you new ? <a href="/register"> become a dragon</a>
-            </div>
+            <div class="new-acount" id="new-acount">New a Forum? <a href="#"> Create an
+                    account</a></div>
         </div>
     </div>
 </body>
