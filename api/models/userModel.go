@@ -1,4 +1,6 @@
-package Models
+package models
+
+import "time"
 
 type User struct {
 	ID           int       `json:"id"`
@@ -6,6 +8,7 @@ type User struct {
 	Password     string    `json:"password"`
 	Email        string    `json:"email"`
 	SessionKey   string    `json:"session"`
+	ExpireDate   time.Time `json:"expire_date"`
 	PostsLike    []int     `json:"posts_like"`
 	PostsDislike []int     `json:"posts_dislike"`
 	Posts        []Poste   `json:"posts"`
