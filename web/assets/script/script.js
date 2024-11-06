@@ -11,26 +11,27 @@ async function getAllPosts() {
     console.error("Failed to fetch posts");
   }
 }
+
 // THIS FUNCTION FORMATS THE DATE 20-2024-11-05T19:30:00Z TO "2 years ago"
 function formatTime(time) {
-  const itemTime = new Date(time).getTime();
-  const currentTime = new Date();
-  const timeDiff = currentTime - itemTime;
-  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-  const minutes = Math.floor(timeDiff / (1000 * 60));
-  const seconds = Math.floor(timeDiff / 1000);
-  if (days > 0) {
-    return `${days} days ago`;
-  } else if (hours > 0) {
-    return `${hours} hours ago`;
-  } else if (minutes > 0) {
-    return `${minutes} minutes ago`;
-  } else if (seconds > 0) {
-    return `${seconds} seconds ago`;
-  } else {
-    return "just now";
-  }
+    const itemTime = new Date(time).getTime();
+    const currentTime = new Date()
+    const timeDiff = currentTime - itemTime;
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor(timeDiff / (1000 * 60));
+    const seconds = Math.floor(timeDiff / 1000);
+    if (days > 0) {
+        return `${days} days ago`;
+    } else if (hours > 0) {
+        return `${hours} hours ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minutes ago`;
+    } else if (seconds > 0) {
+        return `${seconds} seconds ago`;
+    }else {
+        return "just now"
+    }
 }
 
 async function loadData(posts) {
@@ -108,6 +109,8 @@ function updateNavbar(loggedIn) {
     `;
   }
 }
+
+
 
 async function main() {
   const postsPromise = getAllPosts();

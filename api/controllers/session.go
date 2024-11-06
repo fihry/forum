@@ -12,7 +12,6 @@ import (
 	"forum/api/models"
 )
 
-
 func NewSession(user models.User) (models.User, error) {
 	// create a new session key and set the expiration date to 24 hours from now
 	expireDate := time.Now().Add(24 * time.Hour)

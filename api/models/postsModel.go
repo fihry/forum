@@ -32,3 +32,8 @@ type Engagement struct {
 	LikeAction    string `json:"like_action"`
 	DislikeAction string `json:"dislike_action"`
 }
+
+type Filter struct {
+	Type     string `json:"type"`
+	Category string `json:"categories"`
+}

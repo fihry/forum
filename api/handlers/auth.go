@@ -117,6 +117,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	newUser, err := controllers.CreateUser(user)
 	if err != nil {
 		log.Println("Error creating user", err)
+		log.Println("Error creating user", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}

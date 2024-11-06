@@ -2,9 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
-
-	"forum/api/models"
 )
 
 // like and dislike the post
@@ -79,15 +76,6 @@ func RemoveDislike(postId int) (int64, error) {
 		return 0, err
 	}
 	return rows, nil
-}
-
-func GetPostByEngagement(userId int, Post models.Poste) models.Poste {
-	query := `SELECT like, dislike FROM engagement WHERE userId = ? AND postId = ?`
-	err := Database.QueryRow(query, userId, Post.ID).Scan(&Post.Liked, &Post.Disliked)
-	if err != nil {
-		log.Panic("error in query", err)
-	}
-	return Post
 }
 
 func GetLIkesAndDislike(postId int) (int, int, error) {
@@ -177,7 +165,6 @@ func UpdateDislikeToEngagement(postId, userId int) error {
 	if rowsAffected == 0 {
 		return AddDislikeToEngagement(postId, userId)
 	}
-	
 	return nil
 }
 

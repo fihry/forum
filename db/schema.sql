@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY,
     postId INTEGER,
     createdAt DATETIME,
+    createdAt DATETIME,
     author VARCHAR(20) NOT NULL,
     content TEXT,
     likesCount INTEGER,
@@ -39,7 +40,9 @@ CREATE TABLE IF NOT EXISTS comments (
 
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(50) UNIQUE NOT NULL
+    postId INT NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    FOREIGN KEY (postId) REFERENCES posts(id)
 );
 
 

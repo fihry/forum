@@ -89,16 +89,23 @@ func CheckDataForLogin(userData models.User) (bool, error) {
 	if userData.Username == "" {
 		return false, errors.New("username is required")
 	}
-	if len(userData.Username) < 4  || len(userData.Username) > 20 {
+	if len(userData.Username) < 4 || len(userData.Username) > 20 {
 		return false, errors.New("username must contain at least 4 characters")
 	}
 	if userData.Password == "" {
 		return false, errors.New("password is required")
 	}
-	if len(userData.Password) < 8  {
+	if len(userData.Password) < 8 {
 		return false, errors.New("password must contain at least 8 characters")
 	}
 	return true, nil
+}
+
+func CheckDataForComment(commentData models.Comment) error {
+	if commentData.Content == "" {
+		return errors.New("content is required")
+	}
+	return nil
 }
 
 func CheckDataForPost(postData models.Poste) (bool, error) {

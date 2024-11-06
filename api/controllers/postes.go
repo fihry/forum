@@ -233,7 +233,7 @@ func GetPostComments(postId int) []models.Comment {
 	return comments
 }
 
-func AddComment(C models.Comment) (int64, error) {
+func CreateComment(C models.Comment) (int64, error) {
 	stmt, err := Database.Prepare("INSERT INTO comments (content, author, post_id, createdAt) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return 0, err
