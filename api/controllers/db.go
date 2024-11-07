@@ -11,16 +11,17 @@ import (
 var Database *sql.DB
 
 func InitDB() error {
-	Database, err := sql.Open("sqlite3", "db/Forum.db")
+	var err error
+	Database, err = sql.Open("sqlite3", "db/Forum.db")
 	if err != nil {
 		return err
 	}
 	err = Database.Ping()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic()
 	}
 
-	// read the database schema from the schema.sql file
+	// read the db schema from the schema.sql file
 	schema, err := os.ReadFile("db/schema.sql")
 	if err != nil {
 		return err
@@ -30,7 +31,6 @@ func InitDB() error {
 	if err != nil {
 		return err
 	}
-
 	// set the database to the database object
     log.Println("✅ Database initialized")
 	return nil
