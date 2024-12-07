@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY,
     postId INTEGER,
     createdAt DATETIME,
-    createdAt DATETIME,
     author VARCHAR(20) NOT NULL,
     content TEXT,
     likesCount INTEGER,

@@ -22,7 +22,7 @@ func InitDB() error {
 	}
 
 	// read the db schema from the schema.sql file
-	schema, err := os.ReadFile("db/schema.sql")
+	schema, err := os.ReadFile("db/migrations/schema.sql")
 	if err != nil {
 		return err
 	}
@@ -32,6 +32,6 @@ func InitDB() error {
 		return err
 	}
 	// set the database to the database object
-    log.Println("✅ Database initialized")
+	log.Println("✅ Database initialized")
 	return nil
 }
