@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>auth</title>
+    <link rel="stylesheet" href="static/css/global.css" />
+    <script defer src="/static/script/auth.js" type="module"></script>
+</head>
+<body>
+    <!-- auth box -->
+    <div class="auth">
+        <div class="auth-container">
+            <div class="auth-switcher">
+                <a href="/login">login</a>
+                <a href="/register">register</a>
+            </div>
+            <div class="auth-items">
+                <div class="register-box" style="display: none;">
+                    <h2>become a dragon</h2>
+                    <form id="register-form">
+                        <input type="text" name="username" id="register-username" required>
+                        <label for="register-username">User name</label>
+                        <input type="email" name="email" id="register-email" required>
+                        <label for="register-email">Email</label>
+                        <input type="password" name="password" id="register-password" required>
+                        <label for="register-password">Password</label>
+                        <input type="password" name="confirmPassword" id="register-confirm-password" required>
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <p id="error"></p>
+                        <input class="submit" type="submit" value="submit">
+                    </form>
+                </div>
+                <div class="login-box">
+                    <h2>welcome back dragon</h2>
+                    <form id="login-form">
+                        <input type="text" name="username" id="Username" required>
+                        <label for="login-username">userName</label>
+                        <input type="password" name="password" id="password" required>
+                        <label for="login-password">Password</label>
+                        <p id="error"></p>
+                        <input class="submit" type="submit" value="submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginLink = document.querySelector('.auth-switcher a[href="/login"]');
+        const registerLink = document.querySelector('.auth-switcher a[href="/register"]');
+        const loginBox = document.querySelector('.login-box');
+        const registerBox = document.querySelector('.register-box');
+
+        loginLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            loginBox.style.display = 'block';
+            registerBox.style.display = 'none';
+        });
+
+        registerLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            loginBox.style.display = 'none';
+            registerBox.style.display = 'block';
+        });
+    });
+</script>
+</html>

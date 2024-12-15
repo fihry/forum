@@ -50,7 +50,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	log.Println("Stored user", storedUser)
 
 	// Compare the provided password with the stored hashed password
 	if !ComparePasswords(storedUser.Password, user.Password) {
@@ -84,6 +83,10 @@ func ComparePasswords(hashedPassword, plainPassword string) bool {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	var user models.User
 	err := r.ParseForm()
 	if err != nil {
