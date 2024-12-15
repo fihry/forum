@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"forum/api/controllers"
-	"forum/api/models"
+	"forum/models"
 	"forum/utils"
 )
 
@@ -17,7 +17,6 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 		// Session cookie is not present; return all posts without engagement info
 		posts, err := controllers.GetAllPosts()
 		if err != nil {
-			log.Println(err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}

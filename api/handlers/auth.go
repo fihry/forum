@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"forum/api/controllers"
-	"forum/api/models"
+	"forum/models"
 	"forum/utils"
 
 	"golang.org/x/crypto/bcrypt"

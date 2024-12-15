@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"forum/api/controllers"
-	"forum/api/models"
+	"forum/models"
 )
 
 func CheckAuth(session string) (bool, error) {

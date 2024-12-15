@@ -33,7 +33,7 @@ that hosted on gitlab.com
 ## Usage
     
 ```go
-    go run main.go <Port>
+    go run main.go -p=<Port>
 ```
 and open your browser and go to localhost:<Port>
 

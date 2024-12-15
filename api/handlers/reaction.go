@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"forum/api/controllers"
-	"forum/api/models"
+	"forum/models"
 )
 
 // Reaction handlers =================================// Reaction handlers =================================
@@ -32,13 +33,16 @@ func LikePostHandler(w http.ResponseWriter, r *http.Request) {
 	if engagement.LikeAction == "add" {
 		err = controllers.UpdateLikeToEngagement(engagement.PosteID, user.ID)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		n, err = controllers.LikePost(engagement.PosteID)
+		if err != nil {
+			log.Println(err)
+		}
 	} else if engagement.LikeAction == "remove" {
 		err = controllers.RemLikeFromEngagement(engagement.PosteID, user.ID)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		n, err = controllers.RemoveLike(engagement.PosteID)
 	} else {
@@ -73,7 +77,6 @@ func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
 	// Update post likes and dislikes
 	var n int64
 	if engagement.DislikeAction == "add" {
-		fmt.Println("add Dislike")
 		err = controllers.UpdateDislikeToEngagement(engagement.PosteID, user.ID)
 		if err != nil {
 			fmt.Println("updatedislike function return:", err)
@@ -82,9 +85,7 @@ func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		n, err = controllers.DislikePost(engagement.PosteID)
 	} else if engagement.DislikeAction == "remove" {
-		fmt.Println("remove Dislike")
 		err = controllers.RemDislikeFromEngagement(engagement.PosteID, user.ID)
-		fmt.Println("rm Dislike return err:", err)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -97,7 +98,6 @@ func DislikePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil || n == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("err in dislike counter function:", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

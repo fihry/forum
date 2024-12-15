@@ -1,14 +1,22 @@
 package controllers
 
 import (
-	"forum/api/models"
+	"fmt"
+
+	"forum/models"
 )
 
 func FilterPostsByCategory(category string) ([]models.Poste, error) {
 	// select the posts with the given category
-	rows, err := Database.Query("SELECT * FROM posts WHERE category =?", category)
+	query := "SELECT * FROM posts WHERE category =?"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query(category)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 
@@ -32,9 +40,15 @@ func FilterByReaction(userId int) ([]models.Poste, error) {
 	// select the posts where the user has liked or disliked
 	var posts []models.Poste
 	// select just the posts that the user has liked or disliked
-	rows, err := Database.Query("SELECT p.id, p.title, p.createdAt, p.content, p.author, p.category, p.likesCount, p.dislikesCount, e.like AS liked, e.dislike AS disliked FROM posts p JOIN engagements e ON p.id = e.postId WHERE e.userId =?", userId)
+	query := "SELECT p.id, p.title, p.createdAt, p.content, p.author, p.category, p.likesCount, p.dislikesCount, e.like AS liked, e.dislike AS disliked FROM posts p JOIN engagements e ON p.id = e.postId WHERE e.userId =?"
+	stm, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stm.Close()
+	rows, err := stm.Query(userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -53,9 +67,15 @@ func FilterByReaction(userId int) ([]models.Poste, error) {
 func FilterByAuthor(userId int) ([]models.Poste, error) {
 	// select the posts where the user is the author
 	var posts []models.Poste
-	rows, err := Database.Query("SELECT * FROM posts WHERE userId =?", userId)
+	query := "SELECT * FROM posts WHERE author =?"
+	stm, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stm.Close()
+	rows, err := stm.Query(userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -68,4 +88,3 @@ func FilterByAuthor(userId int) ([]models.Poste, error) {
 	}
 	return posts, nil
 }
-

@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"forum/api/controllers"
-	"forum/api/models"
+	"forum/models"
 	"forum/utils"
 )
 
@@ -41,6 +42,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	comment.Author, comment.CreatedAt = user.Username, utils.GetCurrentTime()
 	id, err := controllers.CreateComment(comment)
 	if err != nil || id == 0 {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

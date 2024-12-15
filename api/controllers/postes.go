@@ -2,37 +2,40 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
-	"forum/api/models"
+	"forum/models"
 )
 
 func CreatePoste(P models.Poste) (int64, error) {
-	stmt, err := Database.Prepare("INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)")
+	query := "INSERT INTO posts (title, content, author, category) VALUES (?, ?, ?, ?)"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(P.Title, P.Content, P.Author, P.Category)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to get last insert id: %w", err)
 	}
 	return id, nil
 }
 
 func GetAllPosts() ([]models.Poste, error) {
-	stmt, err := Database.Prepare("SELECT id,title,createdAt,content,author,category,likesCount,dislikesCount FROM posts")
+	query := "SELECT id,title,createdAt,content,author,category,likesCount,dislikesCount FROM posts"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	posts := []models.Poste{}
@@ -48,10 +51,12 @@ func GetAllPosts() ([]models.Poste, error) {
 			&poste.LikesCount,
 			&poste.DislikeCount)
 		if err != nil {
-			log.Println(err)
-			return nil, err
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
-		poste.Comments = GetPostComments(poste.ID)
+		poste.Comments, err = GetPostComments(poste.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get comments: %w", err)
+		}
 		posts = append(posts, poste)
 	}
 	return posts, nil
@@ -69,12 +74,12 @@ func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 			`
 	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(userId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	posts := []models.Poste{}
@@ -94,7 +99,7 @@ func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 			&disliked)
 		if err != nil {
 			log.Println(err)
-			return nil, err
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
 		if liked.Valid {
 			poste.Liked = &liked.Bool
@@ -113,9 +118,10 @@ func GetAllPostsWithEngagement(userId int) ([]models.Poste, error) {
 
 func GetPoste(id int) (models.Poste, error) {
 	poste := models.Poste{}
-	stmt, err := Database.Prepare("SELECT * FROM posts WHERE id = ?")
+	query := "SELECT * FROM posts WHERE id = ?"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return poste, err
+		return poste, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(id).Scan(
@@ -130,15 +136,16 @@ func GetPoste(id int) (models.Poste, error) {
 		&poste.Liked,
 		&poste.Disliked)
 	if err != nil {
-		return poste, err
+		return poste, fmt.Errorf("failed to scan rows: %w", err)
 	}
 	return poste, nil
 }
 
 func GetPostsByCategory(category string) ([]models.Poste, error) {
-	stmt, err := Database.Prepare("SELECT * FROM posts WHERE category = ?")
+	query := "SELECT * FROM posts WHERE category = ?"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(category)
@@ -159,7 +166,7 @@ func GetPostsByCategory(category string) ([]models.Poste, error) {
 			&poste.LikesCount,
 			&poste.DislikeCount)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
 		posts = append(posts, poste)
 	}
@@ -169,12 +176,12 @@ func GetPostsByCategory(category string) ([]models.Poste, error) {
 func GetPostsByAuthor(author string) ([]models.Poste, error) {
 	stmt, err := Database.Prepare("SELECT * FROM posts WHERE author = ?")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(author)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	posts := []models.Poste{}
@@ -190,24 +197,23 @@ func GetPostsByAuthor(author string) ([]models.Poste, error) {
 			&poste.LikesCount,
 			&poste.DislikeCount)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
 		posts = append(posts, poste)
 	}
 	return posts, nil
 }
 
-func GetPostComments(postId int) []models.Comment {
+func GetPostComments(postId int) ([]models.Comment, error) {
 	stmt, err := Database.Prepare("SELECT * FROM comments WHERE postId = ?")
 	if err != nil {
-		log.Println(err)
-		return nil
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(postId)
 	if err != nil {
 		log.Println(err)
-		return nil
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	comments := []models.Comment{}
@@ -225,40 +231,41 @@ func GetPostComments(postId int) []models.Comment {
 			&comment.Disliked,
 		)
 		if err != nil {
-			log.Println(err)
-			return nil
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
 		comments = append(comments, comment)
 	}
-	return comments
+	return comments, nil
 }
 
 func CreateComment(C models.Comment) (int64, error) {
-	stmt, err := Database.Prepare("INSERT INTO comments (content, author, post_id, createdAt) VALUES (?, ?, ?, ?)")
+	query := "INSERT INTO comments (content, author, post_id, createdAt) VALUES (?, ?, ?, ?)"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	result, err := stmt.Exec(C.Content, C.Author, C.ID, C.CreatedAt)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to get last insert id: %w", err)
 	}
 	return id, nil
 }
 
 func GetCommentsByPostId(id int) ([]models.Comment, error) {
-	stmt, err := Database.Prepare("SELECT * FROM comments WHERE post_id = ?")
+	query := "SELECT * FROM comments WHERE post_id = ?"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 	rows, err := stmt.Query(id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute statement: %w", err)
 	}
 	defer rows.Close()
 	comments := []models.Comment{}
@@ -271,7 +278,7 @@ func GetCommentsByPostId(id int) ([]models.Comment, error) {
 			&comment.Author,
 			&comment.ID)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan rows: %w", err)
 		}
 		comments = append(comments, comment)
 	}

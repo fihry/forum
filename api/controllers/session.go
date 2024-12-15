@@ -3,13 +3,12 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 
-	"forum/api/models"
+	"forum/models"
 )
 
 func NewSession(user models.User) (models.User, error) {
@@ -17,7 +16,6 @@ func NewSession(user models.User) (models.User, error) {
 	expireDate := time.Now().Add(24 * time.Hour)
 	UUID, err := uuid.NewV4()
 	if err != nil {
-		log.Printf("Failed to generate UUID: %v", err)
 		return user, fmt.Errorf("failed to generate UUID: %w", err)
 	}
 	user.SessionKey = UUID.String()
@@ -26,36 +24,29 @@ func NewSession(user models.User) (models.User, error) {
 	query := `UPDATE users SET session_key = ?, expire_date = ? WHERE id = ?`
 	stmt, err := Database.Prepare(query)
 	if err != nil {
-		log.Printf("Failed to prepare statement: %v", err)
 		return user, fmt.Errorf("failed to prepare statement: %w", err)
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(user.SessionKey, user.ExpireDate, user.ID)
 	if err != nil {
-		log.Printf("Failed to execute statement: %v", err)
 		return user, fmt.Errorf("failed to execute statement: %w", err)
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Printf("Failed to get rows affected: %v", err)
 		return user, fmt.Errorf("failed to get rows affected: %w", err)
 	}
 
-	log.Printf("Rows affected: %d", rowsAffected)
-
 	if rowsAffected == 0 {
-		log.Printf("No rows were updated for user ID: %d", user.ID)
-		return user, fmt.Errorf("no rows were updated")
+		return user, fmt.Errorf("no rows affected for user with ID %d", user.ID)
 	}
-
-	log.Printf("Session created successfully for user ID: %d", user.ID)
 	return user, nil
 }
 
 func DeleteSession(Key string) error {
-	stmt, err := Database.Prepare("UPDATE  users SET session_key = NULL, expire_date = NULL WHERE session_key = ?")
+	query := "UPDATE  users SET session_key = NULL, expire_date = NULL WHERE session_key = ?"
+	stmt, err := Database.Prepare(query)
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %w", err)
 	}
@@ -72,12 +63,21 @@ func CheckUserState(username string) error {
 	var id int
 	var sessionKey sql.NullString
 	var expireDate sql.NullTime
-
-	err := Database.QueryRow("SELECT id, session_key, expire_date FROM users WHERE username = ?", username).Scan(&id, &sessionKey, &expireDate)
+	query := "SELECT id, session_key, expire_date FROM users WHERE username = ?"
+	stm, err := Database.Prepare(query)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stm.Close()
+	err = stm.QueryRow(username).Scan(&id, &sessionKey, &expireDate)
 	if err != nil {
 		return fmt.Errorf("failed to query user state: %w", err)
 	}
-
-	log.Printf("User state - ID: %d, SessionKey: %v, ExpireDate: %v", id, sessionKey, expireDate)
+	if !sessionKey.Valid || !expireDate.Valid {
+		return fmt.Errorf("user %s is not logged in", username)
+	}
+	if expireDate.Time.Before(time.Now()) {
+		return fmt.Errorf("session for user %s has expired", username)
+	}
 	return nil
 }
