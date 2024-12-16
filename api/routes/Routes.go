@@ -40,7 +40,7 @@ func InitRouter() http.Handler {
 	router.Handle("/api/", ApiRoutes())
 
 	// handle frontend routes
-	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./view/assets"))))
+	router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/assets"))))
 	router.HandleFunc("/auth", handlers.AuthPageHandler)
 	// router.HandleFunc("/register", handlers.RegisterPageHandler)
 	router.HandleFunc("/", handlers.HomePageHandler)
